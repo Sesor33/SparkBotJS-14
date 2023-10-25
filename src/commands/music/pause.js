@@ -11,7 +11,7 @@ module.exports = {
 		if (guildQueue) {
 			queue = client.player.getQueue(interaction.guild.id);
 			queue.setPaused(true);
-			await interaction.reply({ content: `Paused ${guildQueue.nowPlaying}` });
+			await interaction.reply({ content: `Paused ${queue.nowPlaying}` });
 		}
 		else {
 			await interaction.reply({ content: 'Nothing is playing' });

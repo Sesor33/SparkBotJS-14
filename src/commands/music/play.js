@@ -28,6 +28,7 @@ module.exports = {
 
 		queue.textChannel = interaction.channel;
 
+		await interaction.deferReply();
 		const song = await queue.play(urlToPlay, { requestedBy: interaction.user }).catch((_, err) => {
 			if (err) {
 				console.log(err);
@@ -36,8 +37,11 @@ module.exports = {
 				queue.stop();
 			}
 		});
-		if (!song) await interaction.reply('No track found!');
-
-		await interaction.reply({ content: `Now playing: ${queue.nowPlaying}` });
+		if (!song) {
+			await interaction.editReply('No track found!');
+		}
+		else {	
+			await interaction.editReply({ content: `Now playing: ${queue.nowPlaying}` });
+		}
 	},
 };

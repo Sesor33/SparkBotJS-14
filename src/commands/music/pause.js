@@ -1,21 +1,25 @@
 const { SlashCommandBuilder } = require('discord.js');
+const { useTimeline } = require('discord-player');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('pause')
 		.setDescription('Pauses current song'),
-	async execute(interaction, client) {
-		let queue;
-		const guildQueue = client.player.hasQueue(interaction.guild.id);
+	async execute(interaction) {
+		await interaction.deferReply();
 
-		if (guildQueue) {
-			queue = client.player.getQueue(interaction.guild.id);
-			queue.setPaused(true);
-			await interaction.reply({ content: `Paused ${queue.nowPlaying}` });
-		}
-		else {
-			await interaction.reply({ content: 'Nothing is playing' });
+		const timeline = useTimeline(interaction.guildId);
+
+		if (!timeline?.track) {
+			return await interaction.followUp('Nothing is playing.');
 		}
 
+		if (timeline.paused) {
+			return await interaction.followUp(`**${timeline.track.title}** is already paused.`);
+		}
+
+		timeline.pause();
+
+		return await interaction.followUp(`Paused **${timeline.track.title}**`);
 	},
 };

@@ -1,6 +1,6 @@
 {
   "name": "sparkbotjs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A JS based discord bot",
   "main": "index.js",
   "scripts": {
@@ -9,13 +9,17 @@
   "author": "Tech",
   "license": "ISC",
   "dependencies": {
+    "@discord-player/extractor": "^4.4.6",
     "@discordjs/core": "^0.6.0",
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.16.0",
-    "discord-music-player": "^9.1.1",
+    "discord-player": "^6.6.7",
     "discord.js": "^14.12.1",
+    "ffmpeg-static": "^5.2.0",
     "isomorphic-unfetch": "^4.0.2",
-    "json": "^11.0.0"
+    "json": "^11.0.0",
+    "mediaplex": "^0.0.9",
+    "youtube-ext": "^1.1.16"
   },
   "devDependencies": {
     "eslint": "^8.9.0"

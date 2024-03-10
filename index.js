@@ -5,18 +5,14 @@ const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
 
 // music player declaration
-const { Player } = require('discord-music-player');
+const { Player } = require('discord-player');
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates] });
 
-const player = new Player(client, {
-	leaveOnEmpty: false,
-	volume: 100,
-	quality: 'high',
-});
+const player = new Player(client);
 
-client.player = player;
+player.extractors.loadDefault();
 
 // handle command files
 client.commands = new Collection();
@@ -53,6 +49,11 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
+
+// handle player and notify user
+player.events.on('playerStart', (queue, track) => {
+	queue.metadata.channel.send(`Started playing **${track.title}!**`);
+});
 
 // Login to Discord with your client's token
 client.login(token);

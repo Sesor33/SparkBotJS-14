@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
+const { useMainPlayer } = require('discord-player');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -7,41 +8,24 @@ module.exports = {
 		.addStringOption(option => option.setName('url')
 			.setDescription('Youtube URL to play')
 			.setRequired(true)),
-	async execute(interaction, client) {
-		const guildQueue = client.player.hasQueue(interaction.guild.id);
-		let queue;
+	async execute(interaction) {
+		const player = useMainPlayer();
+		const channel = interaction.member.voice.channel;
 		const urlToPlay = interaction.options.getString('url');
 
-		if (!guildQueue) {
-			queue = client.player.createQueue(interaction.guild.id);
-			queue.skipVotes = [];
-		}
-		else {
-			queue = client.player.getQueue(interaction.guild.id);
-		}
-
-		const channel = interaction.member.voice.channel;
-
-		await queue.join(channel).catch((err) => {
-			console.log(`Cound not join voice channel, Error: ${err.stack ? err + '\n\n' + err.stack : err.stack }`);
-		});
-
-		queue.textChannel = interaction.channel;
-
 		await interaction.deferReply();
-		const song = await queue.play(urlToPlay, { requestedBy: interaction.user }).catch((_, err) => {
-			if (err) {
-				console.log(err);
-			}
-			if (!queue) {
-				queue.stop();
-			}
-		});
-		if (!song) {
-			await interaction.editReply('No track found!');
+
+		try {
+			const { track } = await player.play(channel, urlToPlay, {
+				nodeOptions: {
+					metadata: interaction,
+				},
+			});
+
+			await interaction.followUp(`**${track.title} enqueued!**`);
 		}
-		else {	
-			await interaction.editReply({ content: `Now playing: ${queue.nowPlaying}` });
+		catch (e) {
+			await interaction.followUp(`Something broke: ${e}`);
 		}
 	},
 };

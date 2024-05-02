@@ -4,9 +4,17 @@ const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
 
-// Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+// music player declaration
+const { Player } = require('discord-player');
 
+// Create a new client instance
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates] });
+
+const player = new Player(client);
+
+player.extractors.loadDefault();
+
+// handle command files
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'src/commands');
 const commandFolders = fs.readdirSync(foldersPath);
@@ -27,6 +35,7 @@ for (const folder of commandFolders) {
 	}
 }
 
+// handle event files
 const eventsPath = path.join(__dirname, 'src/events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
@@ -41,26 +50,10 @@ for (const file of eventFiles) {
 	}
 }
 
-// // When the client is ready, run this code (only once)
-// client.once('ready', () => {
-// 	console.log('Ready!');
-// });
-
-// client.on(Events.InteractionCreate, async interaction => {
-// 	if (!interaction.isChatInputCommand()) return;
-
-// 	const command = client.commands.get(interaction.commandName);
-
-// 	if (!command) return;
-
-// 	try {
-// 		await command.execute(interaction, client);
-// 	}
-// 	catch (error) {
-// 		console.error(error);
-// 		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-// 	}
-// });
+// handle player and notify user
+player.events.on('playerStart', (queue, track) => {
+	queue.metadata.channel.send(`Started playing **${track.title}!**`);
+});
 
 // Login to Discord with your client's token
 client.login(token);

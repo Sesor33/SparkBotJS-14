@@ -3,22 +3,27 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
+const { YoutubeiExtractor } = require('discord-player-youtubei');
 
 // music player declaration
 const { Player } = require('discord-player');
 
-// Create a new client instance
+// create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates] });
 
+// create new Player instance for music functions
 const player = new Player(client);
 
-player.extractors.loadDefault();
+// Load default extractors except YoutubeExtractor
+player.extractors.loadDefault((ext) => ext !== 'YouTubeExtractor'); // YoutubeExtractor is broken, use YoutubeiExtractor
+player.extractors.register(YoutubeiExtractor, {});
 
 // handle command files
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'src/commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
+// check folders for commands
 for (const folder of commandFolders) {
 	const commandsPath = path.join(foldersPath, folder);
 	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));

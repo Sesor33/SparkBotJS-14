@@ -2,7 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
-const { token } = require('./config.json');
+const { token } = require('./config.json'); // TODO: Handle this with environment variables
 const { YoutubeiExtractor } = require('discord-player-youtubei');
 
 // music player declaration

@@ -1,10 +1,11 @@
 // Require the necessary discord.js classes
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, GatewayIntentBits, Embed } = require('discord.js');
 require('dotenv').config(); // getting environment variables
 const token = process.env.DISCORD_TOKEN;
 const { YoutubeiExtractor } = require('discord-player-youtubei');
+const { EmbedBuilder } = require('discord.js');
 
 // music player declaration
 const { Player } = require('discord-player');
@@ -48,17 +49,32 @@ const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'
 for (const file of eventFiles) {
 	const filePath = path.join(eventsPath, file);
 	const event = require(filePath);
+	console.log(event.name);
 	if (event.once) {
 		client.once(event.name, (...args) => event.execute(...args));
 	}
 	else {
+		console.log(event.name);
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
 
 // handle player and notify user
 player.events.on('playerStart', (queue, track) => {
-	queue.metadata.channel.send(`Started playing **${track.title}!**`);
+
+	const songEmbed = new EmbedBuilder()
+		.setColor(0xFFFFFF)
+		.setTitle(track.title)
+		.setURL(track.url)
+		.setAuthor({name: client.user.username, iconURL: client.user.avatarURL()})
+		.setDescription(track.description)
+		.setThumbnail(track.thumbnail)
+		.setTimestamp()
+		.addFields(
+			{ name: 'Duration', value: track.duration, inline: true },
+			{ name: 'Views', value: track.views.toString(), inline: true },
+		);
+		queue.metadata.channel.send({ embeds: [songEmbed] });
 });
 
 // Login to Discord with your client's token

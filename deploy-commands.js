@@ -1,7 +1,16 @@
 const { REST, Routes } = require('discord.js');
-const { clientId, guildId, token } = require('./config.json');
+//const { clientId, token } = require('./config.json');
+require('dotenv').config(); // getting environment variables
+const token = process.env.DISCORD_TOKEN;
+const clientId = process.env.APP_ID;
+const guildId = process.env.GUILD_ID;
 const fs = require('node:fs');
 const path = require('node:path');
+
+if (!clientId || !token) {
+	console.log(`[WARNING], MISSING TOKEN OR CLIENT ID`);
+	return;
+}
 
 const commands = [];
 // Grab all the command files from the commands directory you created earlier

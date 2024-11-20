@@ -15,6 +15,10 @@ module.exports = {
 
 		await interaction.deferReply();
 
+		if (!channel) {
+			return await interaction.followUp('**You must be in a voice channel to play music!**')
+		}
+
 		try {
 			const { track } = await player.play(channel, urlToPlay, {
 				nodeOptions: {

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { GenerateRandomNumber } = require('../helpers/util'); 
+const { generateRandomNumber } = require('../helpers/util');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -26,7 +26,7 @@ module.exports = {
         var total = 0;
 
         for (let i = 0; i < numDice; i++) {
-            rollValue = GenerateRandomNumber(1, diceValue);
+            rollValue = generateRandomNumber(1, diceValue);
             total += rollValue;
 
             if (diceValue == 20 && rollValue == 20) {

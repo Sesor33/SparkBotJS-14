@@ -6,6 +6,7 @@ require('dotenv').config(); // getting environment variables
 const token = process.env.DISCORD_TOKEN;
 const { YoutubeiExtractor } = require('discord-player-youtubei');
 const { EmbedBuilder } = require('discord.js');
+const { getEmbed } = require('./src/helpers/embedGenerator');
 
 // music player declaration
 const { Player } = require('discord-player');
@@ -60,20 +61,18 @@ for (const file of eventFiles) {
 
 // handle player and notify user
 player.events.on('playerStart', (queue, track) => {
+	const embedData = {
+		"title": track.title,
+		"url": track.url,
+		"author": {name: client.user.username, iconURL: client.user.avatarURL()},
+		"description": track.description,
+		"thumbnail": track.thumbnail,
+		"duration": track.duration,
+		"views": track.views
+	};
 
-	const songEmbed = new EmbedBuilder()
-		.setColor(0xFFFFFF)
-		.setTitle(track.title)
-		.setURL(track.url)
-		.setAuthor({name: client.user.username, iconURL: client.user.avatarURL()})
-		.setDescription(track.description)
-		.setThumbnail(track.thumbnail)
-		.setTimestamp()
-		.addFields(
-			{ name: 'Duration', value: track.duration, inline: true },
-			{ name: 'Views', value: track.views.toString(), inline: true },
-		);
-		queue.metadata.channel.send({ embeds: [songEmbed] });
+	const songEmbed = getEmbed(embedData, 'video');
+	queue.metadata.channel.send({ embeds: [songEmbed] });
 });
 
 // Login to Discord with your client's token

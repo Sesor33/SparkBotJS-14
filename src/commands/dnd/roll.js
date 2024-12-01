@@ -23,7 +23,7 @@ module.exports = {
         await interaction.deferReply();
         await interaction.followUp(`Rolling **${numDice}d${diceValue}**`);
 		
-        var total = 0;
+        let total = 0;
 
         for (let i = 0; i < numDice; i++) {
             rollValue = generateRandomNumber(1, diceValue);

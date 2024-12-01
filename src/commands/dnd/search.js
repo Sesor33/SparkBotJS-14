@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { fetchSRDData } = require('../../helpers/util'); 
 const { DND_SEARCH_CATEGORY_OPTIONS, getAutocompleteOptions } = require('../../helpers/constants');
-//const { DND_SEARCH_CATEGORY_OPTIONS } = require('../../helpers/constants');
+const { getEmbed, formatDnDData } = require('../../helpers/embedGenerator');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -46,8 +46,11 @@ module.exports = {
 		
         try {
             const result = await fetchSRDData(category, name);
+            const embedType = category.toLowerCase().replace(' ', '-');
+            const formattedData = formatDnDData(result, embedType);
+            const embed = getEmbed(formattedData, embedType);
             
-            return await interaction.followUp(`Query result: ${result}`);
+            return await interaction.followUp({ embeds: [embed] });
         }
         catch (e) {
             return await interaction.followUp(`Something broke: ${e.message}`);

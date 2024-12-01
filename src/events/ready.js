@@ -6,7 +6,7 @@ module.exports = {
 	name: 'ready',
 	once: true,
 	execute(client) {
-		var debug = false;
+		let debug = false;
 		if (process.env.DEBUG) {
 			debug = process.env.DEBUG.toLowerCase() == 'debug' ? true : false; // debug set?
 		}

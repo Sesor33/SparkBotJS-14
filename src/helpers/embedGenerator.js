@@ -28,7 +28,6 @@ function formatDnDData(unformattedData, embedType) {
         case 'classes':
             formattedData = {
                 "title" : unformattedData["name"],
-                "description" : "",
                 "hit_die" : unformattedData["hit_die"],
                 "proficiencies" : unformattedData["proficiencies"],
                 "saving_throws" : unformattedData["saving_throws"],
@@ -83,6 +82,7 @@ function createDndAbilityScoresEmbed(data) {
 }
 
 function createClassesEmbed(data) {
+    // handle creating lists to use for formatting strings
     let proficiencies = [];
     let savingThrows = [];
     let subclasses = [];

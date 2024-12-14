@@ -8,6 +8,9 @@ function getEmbed(data, embedType) {
             return createDndAbilityScoresEmbed(data);
         case 'classes':
             return createClassesEmbed(data);
+        case 'equipment':
+            //return createFallbackEmbed(data);
+            return createEquipmentEmbed(data);
         default:
             return createFallbackEmbed(data);
         
@@ -34,6 +37,15 @@ function formatDnDData(unformattedData, embedType) {
                 "subclasses" : unformattedData["subclasses"]
             }
             break;
+        case 'equipment':
+            formattedData = {
+                "title" : unformattedData["name"],
+                "equipment_category" : unformattedData["equipment_category"]["name"],
+                "cost": unformattedData["cost"]["quantity"] + ' ' + unformattedData["cost"]["unit"],
+                "description" : unformattedData["desc"],
+                "weight" : unformattedData["weight"] || null
+            }
+            break;
         default:
             formattedData = {
                 "title" : unformattedData["name"],
@@ -41,6 +53,11 @@ function formatDnDData(unformattedData, embedType) {
             } 
     }
     return formattedData
+}
+
+
+function formatDescription(descriptionObject) {
+   return Array.isArray(descriptionObject) ? descriptionObject.join('\n') : descriptionObject;
 }
 
 
@@ -96,7 +113,7 @@ function createClassesEmbed(data) {
         subclasses.push(subclass.name);
     }
 
-    embed = new EmbedBuilder()
+    const embed = new EmbedBuilder()
         .setColor(0xFFFF00)
         .setTitle(data["title"])
         .setTimestamp()
@@ -110,11 +127,31 @@ function createClassesEmbed(data) {
     return embed;
 }
 
+function createEquipmentEmbed(data) {
+    let description = formatDescription(data["description"]);
+    description = description ? description : '[No Description]';
+    let weight = data["weight"] ? data["weight"].toString() : 'N/A';
+    let cost = data["cost"] ? data["cost"] : 'N/A';
+
+    const embed = new EmbedBuilder()
+        .setColor(0x0000FF)
+        .setTitle(data["title"])
+        .setDescription(description)
+        .addFields(
+            { name: 'Category', value: data["equipment_category"], inline: true },
+            { name: 'Cost', value: cost, inline: true },
+            { name: 'Weight', value: weight, inline: true }
+        )
+        .setTimestamp();
+    
+    return embed;
+}
+
 
 function createFallbackEmbed(data) {
     // check if its an array or string
-    let description = Array.isArray(data["description"]) ? data["description"].join('\n') : data["description"];
-    embed = new EmbedBuilder()
+    let description = formatDescription(data["description"])
+    const embed = new EmbedBuilder()
         .setColor(0x000000)
         .setTitle(data["title"])
         .setDescription(description);

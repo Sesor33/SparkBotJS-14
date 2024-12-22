@@ -9,8 +9,9 @@ function getEmbed(data, embedType) {
         case 'classes':
             return createClassesEmbed(data);
         case 'equipment':
-            //return createFallbackEmbed(data);
             return createEquipmentEmbed(data);
+        case 'equipment-categories':
+            return createEquipmentCategoriesEmbed(data);
         default:
             return createFallbackEmbed(data);
         
@@ -46,6 +47,12 @@ function formatDnDData(unformattedData, embedType) {
                 "weight" : unformattedData["weight"] || null
             }
             break;
+        case 'equipment-categories':
+            formattedData = {
+                "title" : unformattedData["name"],
+                "equipment" : unformattedData["equipment"]
+            }
+            break;
         default:
             formattedData = {
                 "title" : unformattedData["name"],
@@ -56,6 +63,7 @@ function formatDnDData(unformattedData, embedType) {
 }
 
 
+// Description can be either a string or an array of strings, this handles that
 function formatDescription(descriptionObject) {
    return Array.isArray(descriptionObject) ? descriptionObject.join('\n') : descriptionObject;
 }
@@ -94,9 +102,9 @@ function createDndAbilityScoresEmbed(data) {
         .addFields(
             { name: 'Skills', value: skills.join(', '), inline: false }
         );
-
     return embed; 
 }
+
 
 function createClassesEmbed(data) {
     // handle creating lists to use for formatting strings
@@ -123,9 +131,9 @@ function createClassesEmbed(data) {
             { name: 'Saving Throws', value: savingThrows.join(', '), inline: true },
             { name: 'Subclasses', value: subclasses.join(', '), inline: true }
         );
-
     return embed;
 }
+
 
 function createEquipmentEmbed(data) {
     let description = formatDescription(data["description"]);
@@ -143,7 +151,21 @@ function createEquipmentEmbed(data) {
             { name: 'Weight', value: weight, inline: true }
         )
         .setTimestamp();
-    
+    return embed;
+}
+
+
+function createEquipmentCategoriesEmbed(data) {
+    let equipment = []
+    for (let equip of data["equipment"]) {
+        equipment.push(equip.name)
+    }
+
+    const embed = new EmbedBuilder()
+        .setColor(0x0000FF)
+        .setTitle(data["title"])
+        .setDescription(equipment.join('\n'))
+        .setTimestamp()
     return embed;
 }
 
@@ -155,7 +177,6 @@ function createFallbackEmbed(data) {
         .setColor(0x000000)
         .setTitle(data["title"])
         .setDescription(description);
-
     return embed;
 }
 

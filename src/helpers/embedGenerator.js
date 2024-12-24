@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
+const { safeGet } = require('./util');
 
 function getEmbed(data, embedType) {
     switch (embedType) {
@@ -12,6 +13,8 @@ function getEmbed(data, embedType) {
             return createEquipmentEmbed(data);
         case 'equipment-categories':
             return createEquipmentCategoriesEmbed(data);
+        case 'features':
+            return createFeaturesEmbed(data);
         default:
             return createFallbackEmbed(data);
         
@@ -53,6 +56,14 @@ function formatDnDData(unformattedData, embedType) {
                 "equipment" : unformattedData["equipment"]
             }
             break;
+        case 'features':
+            formattedData = {
+                "title" : unformattedData.name,
+                "description" : unformattedData.desc,
+                "level" : unformattedData.level || null,
+                "class" : unformattedData.class.name
+            }
+            break;
         default:
             formattedData = {
                 "title" : unformattedData["name"],
@@ -66,6 +77,11 @@ function formatDnDData(unformattedData, embedType) {
 // Description can be either a string or an array of strings, this handles that
 function formatDescription(descriptionObject) {
    return Array.isArray(descriptionObject) ? descriptionObject.join('\n') : descriptionObject;
+}
+
+
+function formatList(listObject) {
+    return Array.isArray(listObject) ? listObject.join(', ') : listObject;
 }
 
 
@@ -87,20 +103,24 @@ function createVideoEmbed(data) {
 
 
 function createDndAbilityScoresEmbed(data) {
-    let skills = [];
+    let skillList = []
+    let description = formatDescription(data["description"]);
     if (data["skills"]) {
         for (let skill of data["skills"]) {
-          skills.push(skill.name);
+          skillList.push(skill.name);
         }
     }
+    let skills = formatList(skillList);
+    skills = skills ? skills : '[No Skills]';
 
+    console.log('starting to build');
     const embed = new EmbedBuilder()
         .setColor(0x00FF00)
         .setTitle(data["title"])
-        .setDescription(data["description"].join('\n')) // join to handle arrays better
+        .setDescription(description) // join to handle arrays better
         .setTimestamp()
         .addFields(
-            { name: 'Skills', value: skills.join(', '), inline: false }
+            { name: 'Skills', value: skills, inline: false }
         );
     return embed; 
 }
@@ -170,9 +190,28 @@ function createEquipmentCategoriesEmbed(data) {
 }
 
 
+function createFeaturesEmbed(data) {
+    let description = formatDescription(data.description);
+    let className = data.class ? data.class : 'N/A' 
+    let level = data.level ? data.level.toString() : 'N/A';
+    description = description ? description : '[No Description]';
+
+    const embed = new EmbedBuilder()
+        .setColor(0xFFFF00)
+        .setTitle(data.title)
+        .setDescription(description)
+        .addFields(
+            { name: 'Class', value: className, inline: true },
+            { name: 'Level', value: level, inline: true }   
+        )
+        .setTimestamp()
+    return embed;
+}
+
+
 function createFallbackEmbed(data) {
     // check if its an array or string
-    let description = formatDescription(data["description"])
+    let description = formatDescription(data["description"]);
     const embed = new EmbedBuilder()
         .setColor(0x000000)
         .setTitle(data["title"])

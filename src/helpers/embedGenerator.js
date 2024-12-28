@@ -15,6 +15,10 @@ function getEmbed(data, embedType) {
             return createEquipmentCategoriesEmbed(data);
         case 'features':
             return createFeaturesEmbed(data);
+        case 'languages':
+            return createLanguagesEmbed(data);
+        case 'magic-items':
+            return createMagicItemsEmbed(data);
         default:
             return createFallbackEmbed(data);
         
@@ -62,6 +66,22 @@ function formatDnDData(unformattedData, embedType) {
                 "description" : unformattedData.desc,
                 "level" : unformattedData.level || null,
                 "class" : unformattedData.class.name
+            }
+            break;
+        case 'languages':
+            formattedData = {
+                "title" : unformattedData.name,
+                "type" : unformattedData.type,
+                "speakers" : unformattedData.typical_speakers,
+                "script" : unformattedData.script || null
+            }
+            break;
+        case 'magic-items':
+            formattedData = {
+                "title" : unformattedData.name,
+                "equipment_category" : unformattedData.equipment_category.name,
+                "description" : unformattedData.desc,
+                "rarity" : unformattedData.rarity.name
             }
             break;
         default:
@@ -205,6 +225,44 @@ function createFeaturesEmbed(data) {
             { name: 'Level', value: level, inline: true }   
         )
         .setTimestamp()
+    return embed;
+}
+
+
+function createLanguagesEmbed(data) {
+    let speakers = formatDescription(data.speakers);
+    let script = data.script;
+    script = script ? script : 'N/A';
+
+    
+    const embed = new EmbedBuilder()
+        .setColor(0xFF00FF)
+        .setTitle(data.title)
+        .addFields(
+            { name: 'Typical Speakers', value: speakers, inline: false },
+            { name: 'Type', value: data.type, inline: true },
+            { name: 'Script', value: script, inline: true }   
+        )
+        .setTimestamp()
+    return embed;
+
+}
+
+
+function createMagicItemsEmbed(data) {
+    let description = formatDescription(data.description);
+    description = description ? description : '[No Description]';
+
+
+    const embed = new EmbedBuilder()
+        .setColor(0x0000FF)
+        .setTitle(data.title)
+        .setDescription(description)
+        .addFields(
+            { name: 'Category', value: data.equipment_category, inline: true },
+            { name: 'Rarity', value: data.rarity, inline: true }
+        )
+        .setTimestamp();
     return embed;
 }
 

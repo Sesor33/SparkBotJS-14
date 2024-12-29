@@ -5,13 +5,13 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('volume')
 		.setDescription('Sets the volume to a selected value')
-        .addNumberOption(option => option.setName('volume')
-            .setDescription('Volume to set playback to')
-            .setMinValue(0)
-            .setMaxValue(100)
-            .setRequired(true)),
+		.addNumberOption(option => option.setName('volume')
+			.setDescription('Volume to set playback to')
+			.setMinValue(0)
+			.setMaxValue(100)
+			.setRequired(true)),
 	async execute(interaction) {
-        const volume = interaction.options.getNumber('volume');
+		const volume = interaction.options.getNumber('volume');
 
 		await interaction.deferReply();
 

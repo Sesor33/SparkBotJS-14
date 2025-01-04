@@ -1,28 +1,30 @@
 const { EmbedBuilder } = require('discord.js');
-const { safeGet } = require('./util');
 
 function getEmbed(data, embedType) {
-	switch (embedType) {
-		case 'video':
-			return createVideoEmbed(data);
-		case 'ability-scores':
-			return createDndAbilityScoresEmbed(data);
-		case 'classes':
-			return createClassesEmbed(data);
-		case 'equipment':
-			return createEquipmentEmbed(data);
-		case 'equipment-categories':
-			return createEquipmentCategoriesEmbed(data);
-		case 'features':
-			return createFeaturesEmbed(data);
-		case 'languages':
-			return createLanguagesEmbed(data);
-		case 'magic-items':
-			return createMagicItemsEmbed(data);
-		default:
-			return createFallbackEmbed(data);
-		
-	}
+    const embed = new EmbedBuilder()
+        .setTitle(data.title)
+        .setTimestamp();
+
+    switch (embedType) {
+        case 'video':
+            return createVideoEmbed(data, embed);
+        case 'ability-scores':
+            return createDndAbilityScoresEmbed(data, embed);
+        case 'classes':
+            return createClassesEmbed(data, embed);
+        case 'equipment':
+            return createEquipmentEmbed(data, embed);
+        case 'equipment-categories':
+            return createEquipmentCategoriesEmbed(data, embed);
+        case 'features':
+            return createFeaturesEmbed(data, embed);
+        case 'languages':
+            return createLanguagesEmbed(data, embed);
+        case 'magic-items':
+            return createMagicItemsEmbed(data, embed);
+        default:
+            return createFallbackEmbed(data, embed);
+    }
 }
 
 
@@ -31,33 +33,33 @@ function formatDnDData(unformattedData, embedType) {
 	switch (embedType) {
 		case 'ability-scores':
 			formattedData = {
-				"title" : unformattedData["full_name"],
-				"description" : unformattedData["desc"],
-				"skills" : unformattedData["skills"]
+				"title" : unformattedData.full_name,
+				"description" : unformattedData.desc,
+				"skills" : unformattedData.skills
 			}
 			break;
 		case 'classes':
 			formattedData = {
-				"title" : unformattedData["name"],
-				"hit_die" : unformattedData["hit_die"],
-				"proficiencies" : unformattedData["proficiencies"],
-				"saving_throws" : unformattedData["saving_throws"],
-				"subclasses" : unformattedData["subclasses"]
+				"title" : unformattedData.name,
+				"hit_die" : unformattedData.hit_die,
+				"proficiencies" : unformattedData.proficiencies,
+				"saving_throws" : unformattedData.saving_throws,
+				"subclasses" : unformattedData.subclasses
 			}
 			break;
 		case 'equipment':
 			formattedData = {
-				"title" : unformattedData["name"],
-				"equipment_category" : unformattedData["equipment_category"]["name"],
-				"cost": unformattedData["cost"]["quantity"] + ' ' + unformattedData["cost"]["unit"],
-				"description" : unformattedData["desc"],
-				"weight" : unformattedData["weight"] || null
+				"title" : unformattedData.name,
+				"equipment_category" : unformattedData.equipment_category.name,
+				"cost": unformattedData.cost.quantity + ' ' + unformattedData.cost.unit,
+				"description" : unformattedData.desc,
+				"weight" : unformattedData.weight || null
 			}
 			break;
 		case 'equipment-categories':
 			formattedData = {
-				"title" : unformattedData["name"],
-				"equipment" : unformattedData["equipment"]
+				"title" : unformattedData.name,
+				"equipment" : unformattedData.equipment
 			}
 			break;
 		case 'features':
@@ -86,8 +88,8 @@ function formatDnDData(unformattedData, embedType) {
 			break;
 		default:
 			formattedData = {
-				"title" : unformattedData["name"],
-				"description" : unformattedData["desc"]
+				"title" : unformattedData.name,
+				"description" : unformattedData.desc
 			} 
 	}
 	return formattedData
@@ -96,186 +98,146 @@ function formatDnDData(unformattedData, embedType) {
 
 // Description can be either a string or an array of strings, this handles that
 function formatDescription(descriptionObject) {
-   return Array.isArray(descriptionObject) ? descriptionObject.join('\n') : descriptionObject;
+   let result = Array.isArray(descriptionObject) ? descriptionObject.join('\n') : descriptionObject;
+   return result ? result : '[No Description]';
 }
 
 
-function formatList(listObject) {
-	return Array.isArray(listObject) ? listObject.join(', ') : listObject;
+function formatList(listObject, fallbackString = 'N/A') {
+	let result = Array.isArray(listObject) ? listObject.join(', ') : listObject;
+	return result ? result : fallbackString;
 }
 
 
-function createVideoEmbed(data) {
-	const embed = new EmbedBuilder()
-		.setColor(0xFFFFFF)
-		.setTitle(data.title)
-		.setURL(data.url)
-		.setAuthor(data.author)
-		.setDescription(data.description)
-		.setThumbnail(data.thumbnail)
-		.setTimestamp()
-		.addFields(
-			{ name: 'Duration', value: data.duration, inline: true },
-			{ name: 'Views', value: data.views.toString(), inline: true },
-		);
-	return embed;
-}
-
-
-function createDndAbilityScoresEmbed(data) {
-	let skillList = []
-	let description = formatDescription(data.description);
-	if (data.skills) {
-		for (let skill of data.skills) {
-		  skillList.push(skill.name);
+function getStringifiedListFromJson(jsonObject, key, fallbackString = 'N/A') {
+	let resultList = [];
+	for (let item of jsonObject) {
+		if (item.hasOwnProperty(key)) {
+			console.log(item[key]);
+			resultList.push(item[key]);
 		}
 	}
-	let skills = formatList(skillList);
-	skills = skills ? skills : '[No Skills]';
 
-	const embed = new EmbedBuilder()
-		.setColor(0x00FF00)
-		.setTitle(data.title)
-		.setDescription(description) // join to handle arrays better
-		.setTimestamp()
-		.addFields(
-			{ name: 'Skills', value: skills, inline: false }
-		);
-	return embed; 
+	return formatList(resultList, fallbackString)
 }
 
 
-function createClassesEmbed(data) {
-	// handle creating lists to use for formatting strings
-	let proficiencies = [];
-	let savingThrows = [];
-	let subclasses = [];
-	for (let proficiency of data.proficiencies) {
-		proficiencies.push(proficiency.name);
-	}
-	for (let savingThrow of data.saving_throws) {
-		savingThrows.push(savingThrow.name);
-	}
-	for (let subclass of data.subclasses) {
-		subclasses.push(subclass.name);
-	}
-
-	const embed = new EmbedBuilder()
-		.setColor(0xFFFF00)
-		.setTitle(data.title)
-		.setTimestamp()
-		.addFields(
-			{ name: 'Proficiencies', value: proficiencies.join(', ') },
-			{ name: 'Hit die', value: data.hit_die.toString(), inline: true },
-			{ name: 'Saving Throws', value: savingThrows.join(', '), inline: true },
-			{ name: 'Subclasses', value: subclasses.join(', '), inline: true }
-		);
-	return embed;
+function createVideoEmbed(data, embed) {
+    embed.setColor(0xFFFFFF)
+         .setURL(data.url)
+         .setAuthor(data.author)
+         .setDescription(data.description)
+         .setThumbnail(data.thumbnail)
+         .addFields(
+            { name: 'Duration', value: data.duration, inline: true },
+            { name: 'Views', value: data.views.toString(), inline: true },
+        );
+    return embed;
 }
 
+function createDndAbilityScoresEmbed(data, embed) {
+    let skillList = [];
+    let description = formatDescription(data.description);
+    if (data.skills) {
+        for (let skill of data.skills) {
+            skillList.push(skill.name);
+        }
+    }
+    let skills = formatList(skillList);
+    skills = skills ? skills : '[No Skills]';
 
-function createEquipmentEmbed(data) {
-	let description = formatDescription(data.description);
-	description = description ? description : '[No Description]';
-	let weight = data.weight ? data.weight.toString() : 'N/A';
-	let cost = data.cost ? data.cost : 'N/A';
-
-	const embed = new EmbedBuilder()
-		.setColor(0x0000FF)
-		.setTitle(data.title)
-		.setDescription(description)
-		.addFields(
-			{ name: 'Category', value: data.equipment_category, inline: true },
-			{ name: 'Cost', value: cost, inline: true },
-			{ name: 'Weight', value: weight, inline: true }
-		)
-		.setTimestamp();
-	return embed;
+    embed.setColor(0x00FF00)
+         .setDescription(description)
+         .addFields(
+            { name: 'Skills', value: skills, inline: false }
+        );
+    return embed;
 }
 
+function createClassesEmbed(data, embed) {
+    let proficiencies = getStringifiedListFromJson(data.proficiencies, 'name');
+    let savingThrows = getStringifiedListFromJson(data.saving_throws, 'name');
+    let subclasses = getStringifiedListFromJson(data.subclasses, 'name');
 
-function createEquipmentCategoriesEmbed(data) {
-	let equipment = []
-	for (let equip of data.equipment) {
-		equipment.push(equip.name)
-	}
-	let equipmentList = formatDescription(equipment)
-
-	const embed = new EmbedBuilder()
-		.setColor(0x0000FF)
-		.setTitle(data.title)
-		.setDescription(equipmentList)
-		.setTimestamp()
-	return embed;
+    embed.setColor(0xFFFF00)
+         .addFields(
+            { name: 'Proficiencies', value: proficiencies },
+            { name: 'Hit die', value: data.hit_die.toString(), inline: true },
+            { name: 'Saving Throws', value: savingThrows, inline: true },
+            { name: 'Subclasses', value: subclasses, inline: true }
+        );
+    return embed;
 }
 
+function createEquipmentEmbed(data, embed) {
+    let description = formatDescription(data.description);
+    let weight = data.weight ? data.weight.toString() : 'N/A';
+    let cost = data.cost ? data.cost : 'N/A';
 
-function createFeaturesEmbed(data) {
-	let description = formatDescription(data.description);
-	let className = data.class ? data.class : 'N/A' 
-	let level = data.level ? data.level.toString() : 'N/A';
-	description = description ? description : '[No Description]';
-
-	const embed = new EmbedBuilder()
-		.setColor(0xFFFF00)
-		.setTitle(data.title)
-		.setDescription(description)
-		.addFields(
-			{ name: 'Class', value: className, inline: true },
-			{ name: 'Level', value: level, inline: true }   
-		)
-		.setTimestamp()
-	return embed;
+    embed.setColor(0x0000FF)
+         .setDescription(description)
+         .addFields(
+            { name: 'Category', value: data.equipment_category, inline: true },
+            { name: 'Cost', value: cost, inline: true },
+            { name: 'Weight', value: weight, inline: true }
+        );
+    return embed;
 }
 
+function createEquipmentCategoriesEmbed(data, embed) {
+    let equipment = getStringifiedListFromJson(data.equipment, 'name');
 
-function createLanguagesEmbed(data) {
-	let speakers = formatDescription(data.speakers);
-	let script = data.script;
-	script = script ? script : 'N/A';
-
-	
-	const embed = new EmbedBuilder()
-		.setColor(0xFF00FF)
-		.setTitle(data.title)
-		.addFields(
-			{ name: 'Typical Speakers', value: speakers, inline: false },
-			{ name: 'Type', value: data.type, inline: true },
-			{ name: 'Script', value: script, inline: true }   
-		)
-		.setTimestamp()
-	return embed;
-
+    embed.setColor(0x0000FF)
+         .setDescription(equipment);
+    return embed;
 }
 
+function createFeaturesEmbed(data, embed) {
+    let description = formatDescription(data.description);
+    let className = data.class ? data.class : 'N/A';
+    let level = data.level ? data.level.toString() : 'N/A';
 
-function createMagicItemsEmbed(data) {
-	let description = formatDescription(data.description);
-	description = description ? description : '[No Description]';
-
-	const embed = new EmbedBuilder()
-		.setColor(0x0000FF)
-		.setTitle(data.title)
-		.setDescription(description)
-		.addFields(
-			{ name: 'Category', value: data.equipment_category, inline: true },
-			{ name: 'Rarity', value: data.rarity, inline: true }
-		)
-		.setTimestamp();
-	return embed;
+    embed.setColor(0xFFFF00)
+         .setDescription(description)
+         .addFields(
+            { name: 'Class', value: className, inline: true },
+            { name: 'Level', value: level, inline: true }
+        );
+    return embed;
 }
 
+function createLanguagesEmbed(data, embed) {
+    let speakers = formatDescription(data.speakers);
+    let script = data.script;
+    script = script ? script : 'N/A';
 
-function createFallbackEmbed(data) {
-	// check if its an array or string
-	let description = formatDescription(data["description"]);
-	description = description ? description : '[No Description]';
+    embed.setColor(0xFF00FF)
+         .addFields(
+            { name: 'Typical Speakers', value: speakers, inline: false },
+            { name: 'Type', value: data.type, inline: true },
+            { name: 'Script', value: script, inline: true }
+        );
+    return embed;
+}
 
-	const embed = new EmbedBuilder()
-		.setColor(0x000000)
-		.setTitle(data["title"])
-		.setDescription(description);
-	return embed;
+function createMagicItemsEmbed(data, embed) {
+    let description = formatDescription(data.description);
+
+    embed.setColor(0x0000FF)
+         .setDescription(description)
+         .addFields(
+            { name: 'Category', value: data.equipment_category, inline: true },
+            { name: 'Rarity', value: data.rarity, inline: true }
+        );
+    return embed;
+}
+
+function createFallbackEmbed(data, embed) {
+    let description = formatDescription(data.description);
+
+    embed.setColor(0x000000)
+         .setDescription(description);
+    return embed;
 }
 
 module.exports = { getEmbed, formatDnDData };

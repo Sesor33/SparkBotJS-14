@@ -24,6 +24,8 @@ function getEmbed(data, embedType) {
 			return createMagicItemsEmbed(data, embed);
 		case 'monsters':
 			return createMonstersEmbed(data, embed);
+		case 'proficiencies':
+			return createProficienciesEmbed(data, embed);
 		default:
 			return createFallbackEmbed(data, embed);
 	}
@@ -119,6 +121,13 @@ function formatDnDData(unformattedData, embedType) {
 				"actions" : unformattedData.actions,
 				"legendary_actions" : unformattedData.legendary_actions,
 				"image_url" : unformattedData.image
+			}
+			break;
+		case 'proficiencies':
+			formattedData = {
+				"title" : unformattedData.name,
+				"classes" : unformattedData.classes,
+				"races" : unformattedData.races
 			}
 			break;
 		default:
@@ -338,6 +347,20 @@ function createMonstersEmbed(data, embed) {
 		);
 	
 	return embed;
+}
+
+
+function createProficienciesEmbed(data, embed) {
+	let classes = getStringifiedListFromJson(data.classes, "name",'[ N/A ]');
+	let races = getStringifiedListFromJson(data.races, "name", '[ N/A ]');
+
+	embed.setColor(0xC4F530)
+		 .addFields(
+			{ name: 'Classes', value: classes, inline: false },
+			{ name: 'Races', value: races, inline: false }
+		);
+	
+		return embed;
 }
 
 

@@ -8,8 +8,8 @@ function generateRandomNumber(min, max) {
 
 async function fetchSRDData(category, name) {
 	const baseUrl = 'https://www.dnd5eapi.co/api/'
-	const categoryFormatted = category.toLowerCase().replace(' ', '-');
-	const nameFormatted = name.toLowerCase().replace(' ', '-');
+	const categoryFormatted = category.toLowerCase().replaceAll(' ', '-');
+	const nameFormatted = name.toLowerCase().replaceAll(' ', '-');
 	const requestUrl = `${baseUrl}${categoryFormatted}/${nameFormatted}`;
 
 	try {

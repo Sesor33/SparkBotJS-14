@@ -30,7 +30,7 @@ module.exports = {
 			choices =  await getAutocompleteOptions(interaction.options.getString('category'));
 		}
 
-		const filtered = choices.filter(choice => choice.startsWith(focusedOption.value));
+		const filtered = choices.filter(choice => choice.toLowerCase().startsWith(focusedOption.value.toLowerCase()));
 		await interaction.respond(
 			filtered.map(choice => ({ name: choice, value: choice })),
 		);

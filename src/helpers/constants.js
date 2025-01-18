@@ -258,7 +258,7 @@ async function getAutocompleteOptions(category) {
 		case 'equipment':
 			return [];
 		case 'equipment categories':
-			return DND_SEARCH_EQUIPMENT_TYPES_OPTIONS;
+			return [];
 		case 'feats':
 			return [];
 		case 'features':

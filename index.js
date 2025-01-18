@@ -54,7 +54,6 @@ for (const file of eventFiles) {
 		client.once(event.name, (...args) => event.execute(...args));
 	}
 	else {
-		console.log(event.name);
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }

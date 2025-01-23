@@ -1,5 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 
+
 function getEmbed(data, embedType) {
 	const embed = new EmbedBuilder()
 		.setTitle(data.title)
@@ -230,6 +231,7 @@ function createVideoEmbed(data, embed) {
 	return embed;
 }
 
+
 function createDndAbilityScoresEmbed(data, embed) {
 	let skillList = [];
 	let description = formatDescription(data.description);
@@ -249,6 +251,7 @@ function createDndAbilityScoresEmbed(data, embed) {
 	return embed;
 }
 
+
 function createClassesEmbed(data, embed) {
 	let proficiencies = getStringifiedListFromJson(data.proficiencies, 'name');
 	let savingThrows = getStringifiedListFromJson(data.saving_throws, 'name');
@@ -263,6 +266,7 @@ function createClassesEmbed(data, embed) {
 		);
 	return embed;
 }
+
 
 function createEquipmentEmbed(data, embed) {
 	let description = formatDescription(data.description);
@@ -279,6 +283,7 @@ function createEquipmentEmbed(data, embed) {
 	return embed;
 }
 
+
 function createEquipmentCategoriesEmbed(data, embed) {
 	let equipment = getStringifiedListFromJson(data.equipment, 'name');
 
@@ -286,6 +291,7 @@ function createEquipmentCategoriesEmbed(data, embed) {
 		 .setDescription(equipment);
 	return embed;
 }
+
 
 function createFeaturesEmbed(data, embed) {
 	let description = formatDescription(data.description);
@@ -301,6 +307,7 @@ function createFeaturesEmbed(data, embed) {
 	return embed;
 }
 
+
 function createLanguagesEmbed(data, embed) {
 	let speakers = formatDescription(data.speakers);
 	let script = data.script;
@@ -314,6 +321,7 @@ function createLanguagesEmbed(data, embed) {
 		);
 	return embed;
 }
+
 
 function createMagicItemsEmbed(data, embed) {
 	let description = formatDescription(data.description);

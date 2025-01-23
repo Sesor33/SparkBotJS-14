@@ -26,6 +26,8 @@ function getEmbed(data, embedType) {
 			return createMonstersEmbed(data, embed);
 		case 'proficiencies':
 			return createProficienciesEmbed(data, embed);
+		case 'races':
+			return createRacesEmbed(data, embed);
 		default:
 			return createFallbackEmbed(data, embed);
 	}
@@ -130,6 +132,20 @@ function formatDnDData(unformattedData, embedType) {
 				"races" : unformattedData.races
 			}
 			break;
+		case 'races':
+			formattedData = {
+				"title" : unformattedData.name,
+				"speed" : unformattedData.speed,
+				"ability_bonuses" : unformattedData.ability_bonuses,
+				"alignment" : unformattedData.alignment,
+				"age" : unformattedData.age,
+				"size" : unformattedData.size,
+				"size_description" : unformattedData.size_description,
+				"languages" : unformattedData.languages,
+				"language_desc" : unformattedData.language_desc,
+				"traits" : unformattedData.traits
+			}
+			break;			
 		default:
 			formattedData = {
 				"title" : unformattedData.name,
@@ -183,6 +199,21 @@ function formatObjectToStringWithKeys(jsonObject, joinChar = ', ') {
 	});
 
 	return formattedEntries.join(joinChar);
+}
+
+
+// i didn't want to have to do this but i didn't feel like putting this inline
+function formatAbilityBonuses(abilityBonuses) {
+	let formattedBonuses = [];
+
+	for (let abilityBonus of abilityBonuses) {
+		const abilityName = getNestedValue(abilityBonus, 'ability_score.name');
+		const bonusValue = abilityBonus.bonus;
+		
+		formattedBonuses.push(`${abilityName} +${bonusValue}`);
+	}
+
+	return formatList(formattedBonuses);
 }
 
 
@@ -361,6 +392,29 @@ function createProficienciesEmbed(data, embed) {
 		);
 	
 		return embed;
+}
+
+
+function createRacesEmbed(data, embed) {
+	let speed = data.speed.toString();
+	let ability_bonuses = formatAbilityBonuses(data.ability_bonuses);
+	let languages = getStringifiedListFromJson(data.languages, "name", '[ N/A ]');
+	let traits = getStringifiedListFromJson(data.traits, "name", '[ N/A ]');
+
+	embed.setColor(0x36BF5A)
+		 .addFields(
+			{ name: 'Speed', value: speed, inline: true },
+			{ name: 'Ability Bonuses', value: ability_bonuses, inline: true },
+			{ name: 'Alignment', value: data.alignment, inline: false },
+			{ name: 'Age', value: data.age, inline: false },
+			{ name: 'Size', value: data.size, inline: true },
+			{ name: 'Size Desc', value: data.size_description, inline: true },
+			{ name: 'Languages', value: languages, inline: false },
+			{ name: 'Language Desc', value: data.language_desc, inline: true },
+			{ name: 'Traits', value: traits, inline: false }
+		);
+	
+	return embed;
 }
 
 

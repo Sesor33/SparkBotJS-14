@@ -29,6 +29,8 @@ function getEmbed(data, embedType) {
 			return createProficienciesEmbed(data, embed);
 		case 'races':
 			return createRacesEmbed(data, embed);
+		case 'skills':
+			return createSkillsEmbed(data, embed);
 		default:
 			return createFallbackEmbed(data, embed);
 	}
@@ -146,7 +148,14 @@ function formatDnDData(unformattedData, embedType) {
 				"language_desc" : unformattedData.language_desc,
 				"traits" : unformattedData.traits
 			}
-			break;			
+			break;
+		case 'skills':
+			formattedData = {
+				"title": unformattedData.name,
+				"description": unformattedData.desc, 
+				"ability_score_name": unformattedData.ability_score.name
+			}
+			break;	
 		default:
 			formattedData = {
 				"title" : unformattedData.name,
@@ -311,14 +320,17 @@ function createFeaturesEmbed(data, embed) {
 function createLanguagesEmbed(data, embed) {
 	let speakers = formatDescription(data.speakers);
 	let script = data.script;
-	script = script ? script : 'N/A';
 
 	embed.setColor(0xFF00FF)
 		 .addFields(
 			{ name: 'Typical Speakers', value: speakers, inline: false },
 			{ name: 'Type', value: data.type, inline: true },
-			{ name: 'Script', value: script, inline: true }
 		);
+	
+	if (script) {
+		embed.addFields({ name: 'Script', value: script, inline: true });
+	}
+	
 	return embed;
 }
 
@@ -422,6 +434,19 @@ function createRacesEmbed(data, embed) {
 			{ name: 'Traits', value: traits, inline: false }
 		);
 	
+	return embed;
+}
+
+function createSkillsEmbed(data, embed) {
+	let description = formatDescription(data.description);
+	let ability_score_name = data.ability_score_name;
+
+	embed.setColor(0x36BF5A)
+		 .setDescription(description)
+		 .addFields(
+		{ name: 'Ability Score', value: ability_score_name }
+	);
+
 	return embed;
 }
 

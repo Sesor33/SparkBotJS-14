@@ -279,16 +279,19 @@ function createClassesEmbed(data, embed) {
 
 function createEquipmentEmbed(data, embed) {
 	let description = formatDescription(data.description);
-	let weight = data.weight ? data.weight.toString() : 'N/A';
+	let weight = data.weight
 	let cost = data.cost ? data.cost : 'N/A';
 
 	embed.setColor(0x0000FF)
 		 .setDescription(description)
 		 .addFields(
 			{ name: 'Category', value: data.equipment_category, inline: true },
-			{ name: 'Cost', value: cost, inline: true },
-			{ name: 'Weight', value: weight, inline: true }
+			{ name: 'Cost', value: cost, inline: true }
 		);
+	if (weight) {
+		embed.addFields({ name: 'Weight', value: weight.toString(), inline: true });
+	}
+
 	return embed;
 }
 
@@ -305,14 +308,17 @@ function createEquipmentCategoriesEmbed(data, embed) {
 function createFeaturesEmbed(data, embed) {
 	let description = formatDescription(data.description);
 	let className = data.class ? data.class : 'N/A';
-	let level = data.level ? data.level.toString() : 'N/A';
+	let level = data.level;
 
 	embed.setColor(0xFFFF00)
 		 .setDescription(description)
 		 .addFields(
-			{ name: 'Class', value: className, inline: true },
-			{ name: 'Level', value: level, inline: true }
+			{ name: 'Class', value: className, inline: true }
 		);
+	if (level) {
+		embed.addFields({ name: 'Level', value: level.toString(), inline: true });
+	}
+
 	return embed;
 }
 
@@ -326,11 +332,10 @@ function createLanguagesEmbed(data, embed) {
 			{ name: 'Typical Speakers', value: speakers, inline: false },
 			{ name: 'Type', value: data.type, inline: true },
 		);
-	
 	if (script) {
 		embed.addFields({ name: 'Script', value: script, inline: true });
 	}
-	
+
 	return embed;
 }
 

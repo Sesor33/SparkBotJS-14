@@ -31,6 +31,8 @@ function getEmbed(data, embedType) {
 			return createRacesEmbed(data, embed);
 		case 'skills':
 			return createSkillsEmbed(data, embed);
+		case 'spells':
+			return createSpellsEmbed(data, embed);
 		default:
 			return createFallbackEmbed(data, embed);
 	}
@@ -151,11 +153,32 @@ function formatDnDData(unformattedData, embedType) {
 			break;
 		case 'skills':
 			formattedData = {
-				"title": unformattedData.name,
-				"description": unformattedData.desc, 
-				"ability_score_name": unformattedData.ability_score.name
+				"title" : unformattedData.name,
+				"description" : unformattedData.desc, 
+				"ability_score_name" : unformattedData.ability_score.name
 			}
-			break;	
+			break;
+		case 'spells':
+			formattedData = {
+				"title" : unformattedData.name,
+				"description" : unformattedData.desc,
+				"higher_level" : unformattedData.higher_level,
+				"range" : unformattedData.range,
+				"components" : unformattedData.components,
+				"material" : unformattedData.material || null,
+				"ritual" : unformattedData.ritual,
+				"duration" : unformattedData.duration,
+				"concentration" : unformattedData.concentration,
+				"casting_time" : unformattedData.casting_time,
+				"level" : unformattedData.level,
+				"damage" : unformattedData.damage || null,
+				"dc" : unformattedData.dc || null,
+				"area_of_effect" : unformattedData.area_of_effect || null,
+				"school" : unformattedData.school,
+				"classes" : unformattedData.classes,
+				"subclasses" : unformattedData.subclasses
+			}
+			break;
 		default:
 			formattedData = {
 				"title" : unformattedData.name,
@@ -452,6 +475,55 @@ function createSkillsEmbed(data, embed) {
 		{ name: 'Ability Score', value: ability_score_name }
 	);
 
+	return embed;
+}
+
+
+function createSpellsEmbed(data, embed) {
+	let description = formatDescription(data.description);
+	let higher_level = formatDescription(data.higher_level, 'No higher level benefits');
+	let range = data.range;
+	let components = formatList(data.components);
+	let ritual = data.ritual ? 'Yes' : 'No';
+	let duration = data.duration;
+	let concentration = data.concentration ? 'Yes': 'No';
+	let casting_time = data.casting_time;
+	let level = data.level.toString();
+	let damage = data.damage;
+	let dc = data.dc;
+	let area_of_effect = data.area_of_effect;
+	let school = data.school.name;
+	let classes = getStringifiedListFromJson(data.classes, "name");
+	let subclasses = getStringifiedListFromJson(data.subclasses, "name");
+	
+
+	embed.setColor(0x54CCFF)
+		 .setDescription(description)
+		 .addFields(
+			{ name: 'Higher Levels', value: higher_level },
+			{ name: 'Range', value: range },
+			{ name: 'Components', value: components },
+			{ name: 'Ritual', value: ritual },
+			{ name: 'Duration', value: duration },
+			{ name: 'Concentration', value: concentration },
+			{ name: 'Casting Time', value: casting_time },
+			{ name: 'Level', value: level },
+			{ name: 'School', value: school },
+			{ name: 'Classes', value: classes },
+			{ name: 'Subclasses', value: subclasses }
+		 )
+	
+	if (damage) {
+		let damage_type = damage.damage_type.name;
+		let damage_at_slot_level = formatObjectToStringWithKeys(damage.damage_at_slot_level);
+
+		embed.addFields(
+			{ name: 'Damage Type', value: damage_type },
+			{ name: 'Damage at Level', value: damage_at_slot_level }
+		)
+	}
+
+	
 	return embed;
 }
 

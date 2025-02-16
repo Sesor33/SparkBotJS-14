@@ -33,6 +33,8 @@ function getEmbed(data, embedType) {
 			return createSkillsEmbed(data, embed);
 		case 'spells':
 			return createSpellsEmbed(data, embed);
+		case 'subclasses':
+			return createSubclassesEmbed(data, embed);
 		default:
 			return createFallbackEmbed(data, embed);
 	}
@@ -177,6 +179,15 @@ function formatDnDData(unformattedData, embedType) {
 				"school" : unformattedData.school,
 				"classes" : unformattedData.classes,
 				"subclasses" : unformattedData.subclasses
+			}
+			break;
+		case 'subclasses':
+			formattedData = {
+				"title" : unformattedData.name,
+				"description" : unformattedData.desc,
+				"subclass_flavor" : unformattedData.subclass_flavor,
+				"class" : unformattedData.class.name,
+				"spells" : unformattedData.spells
 			}
 			break;
 		default:
@@ -523,8 +534,23 @@ function createSpellsEmbed(data, embed) {
 		)
 	}
 
-	
 	return embed;
+}
+
+
+function createSubclassesEmbed(data, embed) {
+	let description = formatDescription(data.description);
+	let subclass_flavor = data.subclass_flavor;
+	let class_name = data.class;
+	
+	embed.setColor(0xFF5500)
+		 .setDescription(description)
+		 .addFields(
+			{ name: 'Class', value: class_name },
+			{ name: 'Flavor', value: subclass_flavor}
+		 )
+	
+	return embed
 }
 
 

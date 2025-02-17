@@ -261,6 +261,24 @@ function formatAbilityBonuses(abilityBonuses) {
 }
 
 
+function formatSubclassSpells(subclassSpells) {
+	if (!subclassSpells) {
+		return '';
+	}
+	let formattedSpells = [];
+
+	for (let spell of subclassSpells) {
+		const prereqClass = spell.prerequisites[0].name
+		const spellName = getNestedValue(spell, 'spell.name');
+		console.log(spell);
+
+		formattedSpells.push(`**Prerequisite:** ${prereqClass}, **Spell:** ${spellName}`);
+	}
+
+	return formatDescription(formattedSpells);
+}
+
+
 function createVideoEmbed(data, embed) {
 	embed.setColor(0xFFFFFF)
 		 .setURL(data.url)
@@ -542,6 +560,7 @@ function createSubclassesEmbed(data, embed) {
 	let description = formatDescription(data.description);
 	let subclass_flavor = data.subclass_flavor;
 	let class_name = data.class;
+	let spells = data.spells? formatSubclassSpells(data.spells) : {};
 	
 	embed.setColor(0xFF5500)
 		 .setDescription(description)
@@ -549,6 +568,11 @@ function createSubclassesEmbed(data, embed) {
 			{ name: 'Class', value: class_name },
 			{ name: 'Flavor', value: subclass_flavor}
 		 )
+	if (spells) {
+		embed.addFields(
+			{ name: 'Spells', value: spells }
+		)
+	}
 	
 	return embed
 }

@@ -35,6 +35,8 @@ function getEmbed(data, embedType) {
 			return createSpellsEmbed(data, embed);
 		case 'subclasses':
 			return createSubclassesEmbed(data, embed);
+		case 'traits':
+			return createTraitsEmbed(data, embed);
 		default:
 			return createFallbackEmbed(data, embed);
 	}
@@ -190,6 +192,13 @@ function formatDnDData(unformattedData, embedType) {
 				"spells" : unformattedData.spells
 			}
 			break;
+		case 'traits':
+			formattedData = {
+				"title" : unformattedData.name,
+				"description" : unformattedData.desc,
+				"races" : unformattedData.races
+			}
+			break;
 		default:
 			formattedData = {
 				"title" : unformattedData.name,
@@ -272,7 +281,7 @@ function formatSubclassSpells(subclassSpells) {
 		const spellName = getNestedValue(spell, 'spell.name');
 		console.log(spell);
 
-		formattedSpells.push(`**Prerequisite:** ${prereqClass}, **Spell:** ${spellName}`);
+		formattedSpells.push(`**Spell:** ${spellName}, **Prerequisite:** ${prereqClass}`);
 	}
 
 	return formatDescription(formattedSpells);
@@ -540,7 +549,7 @@ function createSpellsEmbed(data, embed) {
 			{ name: 'School', value: school },
 			{ name: 'Classes', value: classes },
 			{ name: 'Subclasses', value: subclasses }
-		 )
+		 );
 	
 	if (damage) {
 		let damage_type = damage.damage_type.name;
@@ -549,7 +558,7 @@ function createSpellsEmbed(data, embed) {
 		embed.addFields(
 			{ name: 'Damage Type', value: damage_type },
 			{ name: 'Damage at Level', value: damage_at_slot_level }
-		)
+		);
 	}
 
 	return embed;
@@ -567,14 +576,28 @@ function createSubclassesEmbed(data, embed) {
 		 .addFields(
 			{ name: 'Class', value: class_name },
 			{ name: 'Flavor', value: subclass_flavor}
-		 )
+		 );
 	if (spells) {
 		embed.addFields(
 			{ name: 'Spells', value: spells }
-		)
+		);
 	}
 	
-	return embed
+	return embed;
+}
+
+
+function createTraitsEmbed(data, embed) {
+	let description = formatDescription(data.description);
+	let races = getStringifiedListFromJson(data.races, "name");
+
+	embed.setColor(0xFF5500)
+		 .setDescription(description)
+		 .addFields(
+			{ name: 'Races', value: races }
+		 );
+	
+	return embed;
 }
 
 

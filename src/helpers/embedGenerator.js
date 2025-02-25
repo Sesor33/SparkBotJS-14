@@ -539,16 +539,16 @@ function createSpellsEmbed(data, embed) {
 		 .setDescription(description)
 		 .addFields(
 			{ name: 'Higher Levels', value: higher_level },
-			{ name: 'Range', value: range },
-			{ name: 'Components', value: components },
-			{ name: 'Ritual', value: ritual },
-			{ name: 'Duration', value: duration },
-			{ name: 'Concentration', value: concentration },
-			{ name: 'Casting Time', value: casting_time },
-			{ name: 'Level', value: level },
-			{ name: 'School', value: school },
-			{ name: 'Classes', value: classes },
-			{ name: 'Subclasses', value: subclasses }
+			{ name: 'Range', value: range, inline: true },
+			{ name: 'Components', value: components, inline: true },
+			{ name: 'Ritual', value: ritual, inline: true },
+			{ name: 'Duration', value: duration, inline: true },
+			{ name: 'Concentration', value: concentration, inline: true },
+			{ name: 'Casting Time', value: casting_time, inline: true },
+			{ name: 'Level', value: level, inline: true },
+			{ name: 'School', value: school, inline: true },
+			{ name: 'Classes', value: classes, inline: true },
+			{ name: 'Subclasses', value: subclasses, inline: true }
 		 );
 	
 	if (damage) {

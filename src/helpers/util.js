@@ -1,5 +1,6 @@
 const axios = require('axios');
 const isLocalAPI = process.env.IS_LOCAL_API;
+const debug = process.env.DEBUG;
 
 
 function generateRandomNumber(min, max) {
@@ -25,7 +26,16 @@ async function fetchSRDData(category, name) {
 		throw e;
 	}
 
-} 
+}
 
 
-module.exports = { generateRandomNumber, fetchSRDData };
+// Function to easily handle logging to console if DEBUG environment var is on
+function debugLog(obj) {
+	if (debug) {
+		console.log(obj);
+	}
+	return;
+}
+
+
+module.exports = { generateRandomNumber, fetchSRDData, debugLog };

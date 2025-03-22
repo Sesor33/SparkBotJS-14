@@ -15,18 +15,21 @@ let tables = [];
 
 
 async function initializeDatabase() {
-	if (dbName) {
-		// create a new sequelize instance
-		sequelize = new Sequelize({
-			dialect : MySqlDialect,
-			database : dbName,
-			user : dbUsername,
-			password : dbPassword,
-			host : dbHost,
-			port : dbPort
-		});
+	if (!dbName || !dbUsername || !dbPassword) {
+		// Theres nothing here, quit out
+		return;
 	}
 
+	// create a new sequelize instance
+	sequelize = new Sequelize({
+		dialect : MySqlDialect,
+		database : dbName,
+		user : dbUsername,
+		password : dbPassword,
+		host : dbHost,
+		port : dbPort
+	});
+	
 	try {
 		await sequelize.authenticate();
 		console.log('DB Connection successful!');

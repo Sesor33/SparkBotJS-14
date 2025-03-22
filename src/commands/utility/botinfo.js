@@ -1,5 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
-const { EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags, EmbedBuilder } = require('discord.js');
 const { version } = require('../../../config.json');
 
 module.exports = {
@@ -18,6 +17,6 @@ module.exports = {
 			)
 			.setTimestamp()
 			.setFooter({ text: `Queried by ${interaction.member.displayName}`, iconURL: `${interaction.user.displayAvatarURL()}` });
-		await interaction.reply({ embeds: [msgEmbed], ephemeral: true });
+		await interaction.reply({ embeds: [msgEmbed], flags: MessageFlags.Ephemeral });
 	},
 };

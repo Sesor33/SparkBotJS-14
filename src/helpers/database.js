@@ -1,5 +1,6 @@
 const { Sequelize, DataTypes } = require('@sequelize/core');
 const { MySqlDialect } = require('@sequelize/mysql');
+const { RateLimiterMemory } = require('rate-limiter-flexible');
 require('dotenv').config(); // getting environment variables
 
 const dbName = process.env.DB_NAME;
@@ -10,6 +11,7 @@ const dbPort = 3306
 
 let sequelize;
 let passphrase;
+let rateLimiter;
 let isConnected = false;
 let tables = [];
 
@@ -19,6 +21,12 @@ async function initializeDatabase() {
 		// Theres nothing here, quit out
 		return;
 	}
+
+	// create rate limiter object
+	rateLimiter = new RateLimiterMemory({
+		points : 1,
+		duration : 10
+	});
 
 	// create a new sequelize instance
 	sequelize = new Sequelize({
@@ -80,4 +88,9 @@ function getConnectionStatus() {
 	return isConnected;
 }
 
-module.exports = { initializeDatabase, getPassphraseObject, getConnectionStatus };
+
+function getRateLimiter() {
+	return rateLimiter;
+}
+
+module.exports = { initializeDatabase, getPassphraseObject, getConnectionStatus, getRateLimiter };

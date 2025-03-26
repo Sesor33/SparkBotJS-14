@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
-const { getPassphraseObject, getConnectionStatus } = require('../../helpers/database');
+const { getPassphraseObject, getConnectionStatus, getRateLimiter } = require('../../helpers/database');
+const { debugLog } = require('../../helpers/util');
 const argon2 = require('argon2');
 
 
@@ -22,9 +23,14 @@ module.exports = {
 		const phrase = interaction.options.getString('phrase');
 		const guildId = interaction.guildId;
 		const channelId = interaction.channelId;
+		const userId = interaction.userId;
 		const passphrase = getPassphraseObject();
+		const rateLimiter = getRateLimiter();
 		
 		try {
+			// check rate limit
+			await rateLimiter.consume(userId);
+
 			// checking if guild/channel combo already exists
 			existingHash = await passphrase.findOne({
 				where : {
@@ -34,7 +40,7 @@ module.exports = {
 			});
 
 			// if it does, check auth with argon2 
-			if (existingHash) {
+			if (existingHash && existingHash.channel_id === channelId) {
 				if (await argon2.verify(existingHash.phrase, phrase)) {
 					interaction.member.roles.add(existingHash.role_id, 'User properly authenticated');
 					return await interaction.reply({ content: `Authenticated!`, flags: MessageFlags.Ephemeral });
@@ -48,7 +54,8 @@ module.exports = {
 				return await interaction.reply({ content: `No auth is set on for this channel`, flags: MessageFlags.Ephemeral });
 			}
 		} catch (err) {
-			return await interaction.reply(`Something broke: ${err.message}`);
+			// rate limited
+			return await interaction.reply({ content: `Too many requests, please wait a few seconds and try again.`, flags: MessageFlags.Ephemeral });
 		}
 	},
 }

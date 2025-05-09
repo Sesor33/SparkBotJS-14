@@ -17,6 +17,7 @@
     "@sequelize/mysql": "^7.0.0-alpha.45",
     "argon2": "^0.41.1",
     "axios": "^1.8.4",
+    "bgutils-js": "^3.2.0",
     "discord-player": "^6.7.1",
     "discord-player-youtubei": "^1.4.3",
     "discord.js": "^14.18.0",
@@ -38,5 +39,6 @@
   "bugs": {
     "url": "https://github.com/Sesor33/SparkBotJS-14/issues"
   },
-  "homepage": "https://github.com/Sesor33/SparkBotJS-14#readme"
+  "homepage": "https://github.com/Sesor33/SparkBotJS-14#readme",
+  "type": "commonjs"
 }

@@ -29,6 +29,13 @@ async function fetchSRDData(category, name) {
 }
 
 
+// Format list to a single line joined by a commas
+function formatList(listObject, fallbackString = 'N/A') {
+	let result = Array.isArray(listObject) ? listObject.join(', ') : listObject;
+	return result ? result : fallbackString;
+}
+
+
 // Function to easily handle logging to console if DEBUG environment var is on
 function debugLog(obj) {
 	if (debug) {
@@ -38,4 +45,4 @@ function debugLog(obj) {
 }
 
 
-module.exports = { generateRandomNumber, fetchSRDData, debugLog };
+module.exports = { generateRandomNumber, fetchSRDData, formatList, debugLog };

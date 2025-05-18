@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
+const { formatList } = require('../helpers/util');
 
 
 function getEmbed(data, embedType) {
@@ -216,11 +217,7 @@ function formatDescription(descriptionObject, fallbackString = '[No Description]
 }
 
 
-// Formst list to a single line joined by a commas
-function formatList(listObject, fallbackString = 'N/A') {
-	let result = Array.isArray(listObject) ? listObject.join(', ') : listObject;
-	return result ? result : fallbackString;
-}
+
 
 // in case you need to get a nested value while stringifying
 function getNestedValue(jsonObject, multiKey) {

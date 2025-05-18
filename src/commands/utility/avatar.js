@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -30,6 +30,6 @@ module.exports = {
 		const optionResolution = interaction.options.getInteger('resolution');
 		const optionExtension = interaction.options.getString('format');
 
-		await interaction.reply({ content: `${targetMember.displayAvatarURL({ extension: optionExtension, size: optionResolution })}`, ephemeral: true });
+		await interaction.reply({ content: `${targetMember.displayAvatarURL({ extension: optionExtension, size: optionResolution })}`, flags: MessageFlags.Ephemeral });
 	},
 };

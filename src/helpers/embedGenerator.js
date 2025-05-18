@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
+const { formatList } = require('../helpers/util');
 
 
 function getEmbed(data, embedType) {
@@ -209,17 +210,14 @@ function formatDnDData(unformattedData, embedType) {
 }
 
 
-// Description can be either a string or an array of strings, this handles that
+// description can be either a string or an array of strings, this handles that
 function formatDescription(descriptionObject, fallbackString = '[No Description]') {
    let result = Array.isArray(descriptionObject) ? descriptionObject.join('\n') : descriptionObject;
    return result ? result : fallbackString;
 }
 
 
-function formatList(listObject, fallbackString = 'N/A') {
-	let result = Array.isArray(listObject) ? listObject.join(', ') : listObject;
-	return result ? result : fallbackString;
-}
+
 
 // in case you need to get a nested value while stringifying
 function getNestedValue(jsonObject, multiKey) {
@@ -227,6 +225,7 @@ function getNestedValue(jsonObject, multiKey) {
 }
 
 
+// gets a string list from json objects
 function getStringifiedListFromJson(jsonObject, key, fallbackString = 'N/A', includeKey = false) {
 	let resultList = [];
 	for (let item of jsonObject) {
@@ -240,6 +239,7 @@ function getStringifiedListFromJson(jsonObject, key, fallbackString = 'N/A', inc
 }
 
 
+// attempts to turn json object into a string while keeping the keys of each entry
 function formatObjectToStringWithKeys(jsonObject, joinChar = ', ') {
 	if (typeof jsonObject !== 'object' || jsonObject === null) {
 		return '';
@@ -270,6 +270,7 @@ function formatAbilityBonuses(abilityBonuses) {
 }
 
 
+// handles weird subclass spell formatting
 function formatSubclassSpells(subclassSpells) {
 	if (!subclassSpells) {
 		return '';

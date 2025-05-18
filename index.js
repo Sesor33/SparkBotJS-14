@@ -3,10 +3,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits, Embed } = require('discord.js');
 require('dotenv').config(); // getting environment variables
-const token = process.env.DISCORD_TOKEN;
 const { YoutubeiExtractor } = require('discord-player-youtubei');
 const { EmbedBuilder } = require('discord.js');
 const { getEmbed } = require('./src/helpers/embedGenerator');
+const { initializeDatabase } = require('./src/helpers/database');
+
+const token = process.env.DISCORD_TOKEN;
+
 
 // music player declaration
 const { Player } = require('discord-player');
@@ -20,6 +23,9 @@ const player = new Player(client);
 // Load default extractors except YoutubeExtractor
 player.extractors.loadDefault((ext) => ext !== 'YouTubeExtractor'); // YoutubeExtractor is broken, use YoutubeiExtractor
 player.extractors.register(YoutubeiExtractor, {});
+
+
+
 
 // handle command files
 client.commands = new Collection();
@@ -73,6 +79,8 @@ player.events.on('playerStart', (queue, track) => {
 	const songEmbed = getEmbed(embedData, 'video');
 	queue.metadata.channel.send({ embeds: [songEmbed] });
 });
+
+initializeDatabase();
 
 // Login to Discord with your client's token
 client.login(token);

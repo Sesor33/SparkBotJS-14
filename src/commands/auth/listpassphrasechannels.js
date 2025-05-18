@@ -2,7 +2,6 @@ const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('disc
 const { getPassphraseObject, getConnectionStatus, getRateLimiter } = require('../../helpers/database');
 const { formatList, debugLog } = require('../../helpers/util');
 const argon2 = require('argon2');
-const { execute } = require('./passphrase');
 
 
 module.exports = {

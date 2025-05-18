@@ -12,7 +12,7 @@ module.exports = {
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
         
     async execute(interaction, client) {
-        await interaction.deferReply()
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral })
         // ensure DB is connected before proceeding
 		if (!getConnectionStatus()) {
 			return await interaction.followUp('Database is not connected!');
@@ -41,10 +41,10 @@ module.exports = {
                 channelNames.push(channel.name)
             }
         }  catch (err) {
-            return await interaction.followUp({ content: `Error when contacting database ${err}`, flags: MessageFlags.Ephemeral });
+            return await interaction.followUp({ content: `Error when contacting database ${err}` });
         }   
 
         
-        return await interaction.followUp({ content: `Channels: ${formatList(channelNames)}`, flags: MessageFlags.Ephemeral })
+        return await interaction.followUp({ content: `Channels: ${formatList(channelNames)}` })
     }
 }

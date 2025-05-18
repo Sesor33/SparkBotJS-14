@@ -62,6 +62,8 @@ async function initializeDatabase() {
 			type : DataTypes.STRING,
 			allowNull : false
 		},
+	}, {
+		paranoid : true
 	});
 
 	tables.push(passphrase);

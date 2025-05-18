@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const { getPassphraseObject, getConnectionStatus } = require('../../helpers/database');
 const { debugLog } = require('../../helpers/util');
 const argon2 = require('argon2');
@@ -23,7 +23,7 @@ module.exports = {
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 	
 	async execute(interaction) {
-		await interaction.deferReply()
+		await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 		// ensure DB is connected before proceeding
 		if (!getConnectionStatus()) {
 			return await interaction.followUp('Database is not connected!');
@@ -76,9 +76,9 @@ module.exports = {
 				);
 			}
 		} catch (err) {
-			return await interaction.followUp(`Something broke: ${err.message}`);
+			return await interaction.followUp({ content: `Something broke: ${err.message}` });
 		}
 
-		return await interaction.followUp('Successfully added passphrase!');
+		return await interaction.followUp({ content: `Successfully added passphrase!` });
 	},
 }

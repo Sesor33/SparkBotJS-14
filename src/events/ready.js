@@ -1,9 +1,10 @@
+const { Events } = require('discord.js');
 const { useMainPlayer } = require("discord-player");
 
 const player = useMainPlayer();
 
 module.exports = {
-	name: 'ready',
+	name: Events.ClientReady,
 	once: true,
 	execute(client) {
 		let debug = false;

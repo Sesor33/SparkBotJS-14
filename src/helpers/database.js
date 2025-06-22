@@ -7,10 +7,12 @@ const dbName = process.env.DB_NAME;
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
 const dbHost = 'localhost';
-const dbPort = 3306
+const dbPort = 3306;
+const analytics = process.env.ANALYTICS;
 
 let sequelize;
 let passphrase;
+let commandLog;
 let rateLimiter;
 let isConnected = false;
 let tables = [];
@@ -45,7 +47,7 @@ async function initializeDatabase() {
 		console.error('Arrr, we have a problem with the connection. No DB today it seems');
 	}
 
-	passphrase = sequelize.define('Passphrase', {
+	passphrase = sequelize.define('passphrase', {
 		guild_id: {
 			type : DataTypes.STRING,
 			allowNull : false
@@ -68,6 +70,39 @@ async function initializeDatabase() {
 
 	tables.push(passphrase);
 
+	if (analytics) {
+		commandLog = sequelize.define('commandlog', {
+			command_id: {
+				type : DataTypes.STRING,
+				allowNull : false
+			},
+			channel_id: {
+				type : DataTypes.STRING,
+				allowNull : false
+			},
+			guild_id: {
+				type : DataTypes.STRING,
+				allowNull : false
+			},
+			timestamp: {
+				type : DataTypes.DATE,
+				allowNull : false
+			},
+			error: {
+				type : DataTypes.BOOLEAN,
+				allowNull : false
+			},
+			error_msg: {
+				type : DataTypes.STRING,
+				allowNull : true
+			},
+		}, {
+			paranoid : true
+		});
+
+		tables.push(commandLog)
+	}
+
 	// attempt to sync all tables in the list
 	try {
 		for (let table of tables) {
@@ -85,6 +120,10 @@ function getPassphraseObject() {
 	return passphrase;
 }
 
+function getCommandLogObject() {
+	return commandLog;
+}
+
 
 function getConnectionStatus() {
 	return isConnected;
@@ -95,4 +134,4 @@ function getRateLimiter() {
 	return rateLimiter;
 }
 
-module.exports = { initializeDatabase, getPassphraseObject, getConnectionStatus, getRateLimiter };
+module.exports = { initializeDatabase, getPassphraseObject, getCommandLogObject, getConnectionStatus, getRateLimiter };

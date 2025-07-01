@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const { fetchSRDData } = require('../../helpers/util'); 
 const { DND_SEARCH_CATEGORY_OPTIONS, getAutocompleteOptions } = require('../../helpers/constants');
 const { getEmbed, formatDnDData } = require('../../helpers/embedGenerator');
+const { logCommand } = require('../../helpers/analytics');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -52,8 +53,9 @@ module.exports = {
 			
 			return await interaction.followUp({ embeds: [embed] });
 		}
-		catch (e) {
-			return await interaction.followUp(`Something broke: ${e.message}`);
+		catch (err) {
+			logCommand(interaction, true, e.message);
+			return await interaction.followUp(`Something broke: ${err.message}`);
 		}
 	},
 };

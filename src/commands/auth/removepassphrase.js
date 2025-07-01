@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const { getPassphraseObject, getConnectionStatus } = require('../../helpers/database');
 const { debugLog } = require('../../helpers/util');
+const { logCommand } = require('../../helpers/analytics');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -51,6 +52,7 @@ module.exports = {
 				return await interaction.followUp({ content: `No existing passphrases for channel: ${channelName}` })
 			}
 		} catch (err) {
+			logCommand(interaction, true, err.message);
 			return await interaction.followUp(`Something broke: ${err.message}`);
 		}
 

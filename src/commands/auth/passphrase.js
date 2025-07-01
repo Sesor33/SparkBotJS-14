@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const { getPassphraseObject, getConnectionStatus, getRateLimiter } = require('../../helpers/database');
 const { debugLog } = require('../../helpers/util');
+const { logCommand } = require('../../helpers/analytics');
 const argon2 = require('argon2');
 
 
@@ -55,6 +56,7 @@ module.exports = {
 			}
 		} catch (err) {
 			// rate limited
+			logCommand(interaction, true, err.message);
 			return await interaction.reply({ content: `Too many requests, please wait a few seconds and try again.`, flags: MessageFlags.Ephemeral });
 		}
 	},

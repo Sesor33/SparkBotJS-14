@@ -132,3 +132,7 @@ dist
 # config stuff
 config.json
 *.code-workspace
+
+# Mac
+.DS_Store
+

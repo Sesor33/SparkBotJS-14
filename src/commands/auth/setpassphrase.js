@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const { getPassphraseObject, getConnectionStatus } = require('../../helpers/database');
 const { debugLog } = require('../../helpers/util');
+const { logCommand } = require('../../helpers/analytics');
 const argon2 = require('argon2');
 
 
@@ -76,6 +77,7 @@ module.exports = {
 				);
 			}
 		} catch (err) {
+			logCommand(interaction, true, err.message);
 			return await interaction.followUp({ content: `Something broke: ${err.message}` });
 		}
 

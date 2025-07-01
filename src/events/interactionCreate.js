@@ -14,7 +14,6 @@ module.exports = {
 				logCommand(interaction);
 			}
 			catch (error) {
-				console.error(error);
 				logCommand(interaction, true, error);
 				await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
 			}

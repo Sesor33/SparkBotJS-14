@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { useMainPlayer } = require('discord-player');
+const { logCommand } = require('../../helpers/analytics');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -26,10 +27,11 @@ module.exports = {
 				},
 			});
 
-			await interaction.followUp(`**${track.title} enqueued!**`);
+			return await interaction.followUp(`**${track.title} enqueued!**`);
 		}
-		catch (e) {
-			await interaction.followUp(`Something broke: ${e}`);
+		catch (err) {
+			logCommand(interaction, true, err.message);
+			return await interaction.followUp(`Something broke: ${e}`);
 		}
 	},
 };

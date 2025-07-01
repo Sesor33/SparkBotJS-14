@@ -11,10 +11,10 @@ module.exports = {
 		if (guildQueue) {
 			queue = client.player.getQueue(interaction.guild.id);
 			const progressBar = queue.createProgressBar();
-			await interaction.reply({ content: `Current Song: ${queue.nowPlaying}\n${progressBar.prettier}` });
+			return await interaction.reply({ content: `Current Song: ${queue.nowPlaying}\n${progressBar.prettier}` });
 		}
 		else {
-			await interaction.reply({ content: 'Nothing is playing' });
+			return await interaction.reply({ content: 'Nothing is playing' });
 		}
 
 	},

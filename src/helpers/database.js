@@ -13,6 +13,7 @@ const analytics = process.env.ANALYTICS;
 let sequelize;
 let passphrase;
 let commandLog;
+let analyticsLog;
 let rateLimiter;
 let isConnected = false;
 let tables = [];
@@ -100,7 +101,22 @@ async function initializeDatabase() {
 			paranoid : true
 		});
 
-		tables.push(commandLog)
+		tables.push(commandLog);
+
+		analyticsLog = sequelize.define('analyticslog', {
+			latency: {
+				type : DataTypes.INTEGER,
+				allowNull : true
+			},
+			user_count: {
+				type: DataTypes.INTEGER,
+				allowNull : false
+			},
+		}, {
+			paranoid : true
+		});
+
+		tables.push(analyticsLog);
 	}
 
 	// attempt to sync all tables in the list
@@ -120,8 +136,14 @@ function getPassphraseObject() {
 	return passphrase;
 }
 
+
 function getCommandLogObject() {
 	return commandLog;
+}
+
+
+function getAnalyticsLogObject() {
+	return analyticsLog;
 }
 
 
@@ -134,4 +156,4 @@ function getRateLimiter() {
 	return rateLimiter;
 }
 
-module.exports = { initializeDatabase, getPassphraseObject, getCommandLogObject, getConnectionStatus, getRateLimiter };
+module.exports = { initializeDatabase, getPassphraseObject, getCommandLogObject, getAnalyticsLogObject, getConnectionStatus, getRateLimiter };

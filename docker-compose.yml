@@ -1,0 +1,41 @@
+services:
+  db:
+    # image: ghcr.io/5e-bits/5e-database:latest
+    build: ../DnDLocalAPI/5e-database # I use a mac so I have to build locally, use image if on x86
+    ports:
+      - '27017:27017'
+
+  cache:
+    image: redis:6.2.5
+    ports:
+      - '6379:6379'
+
+  api:
+    environment:
+      MONGODB_URI: mongodb://db/5e-database
+      REDIS_URL: redis://cache:6379
+    build: .
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+      - cache
+
+  sparkbotdb:
+    image: mysql:latest
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+
+  sparkbot:
+    image: forsburn/sparkbot:latest
+    network_mode: host
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      IS_LOCAL_API: ${IS_LOCAL_API}
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+

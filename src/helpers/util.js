@@ -45,4 +45,17 @@ function debugLog(obj) {
 }
 
 
-module.exports = { generateRandomNumber, fetchSRDData, formatList, debugLog };
+function getUserCount(client) {
+	let totalUsers = 0;
+	client.guilds.cache.forEach(guild => {
+		totalUsers += guild.memberCount
+	});
+	return totalUsers;
+}
+
+
+function getPing(client) {
+	return client.ws.ping;
+}
+
+module.exports = { generateRandomNumber, fetchSRDData, formatList, debugLog, getUserCount, getPing };

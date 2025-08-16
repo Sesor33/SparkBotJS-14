@@ -9,6 +9,7 @@ const dbPassword = process.env.DB_PASSWORD;
 const dbHost = 'localhost';
 const dbPort = 3306;
 const analytics = process.env.ANALYTICS;
+const dbObjects = {}
 
 let sequelize;
 let passphrase;
@@ -68,8 +69,7 @@ async function initializeDatabase() {
 	}, {
 		paranoid : true
 	});
-
-	tables.push(passphrase);
+	dbObjects.passphrase = passphrase;
 
 	if (analytics) {
 		commandLog = sequelize.define('commandlog', {
@@ -100,8 +100,7 @@ async function initializeDatabase() {
 		}, {
 			paranoid : true
 		});
-
-		tables.push(commandLog);
+		dbObjects.commandlog = commandLog
 
 		analyticsLog = sequelize.define('analyticslog', {
 			latency: {
@@ -115,8 +114,7 @@ async function initializeDatabase() {
 		}, {
 			paranoid : true
 		});
-
-		tables.push(analyticsLog);
+		dbObjects.analyticslog = analyticsLog;
 	}
 
 	// attempt to sync all tables in the list
@@ -132,28 +130,21 @@ async function initializeDatabase() {
 }
 
 
-function getPassphraseObject() {
-	return passphrase;
-}
-
-
-function getCommandLogObject() {
-	return commandLog;
-}
-
-
-function getAnalyticsLogObject() {
-	return analyticsLog;
-}
-
-
 function getConnectionStatus() {
 	return isConnected;
 }
 
+function getDBObject(tableName) {
+	if (tableName in dbObjects) {
+		return dbObjects[tableName];
+	} else {
+		console.error("Invalid table name: " + tableName);
+		return null;
+	}
+}
 
 function getRateLimiter() {
 	return rateLimiter;
 }
 
-module.exports = { initializeDatabase, getPassphraseObject, getCommandLogObject, getAnalyticsLogObject, getConnectionStatus, getRateLimiter };
+module.exports = { initializeDatabase, getDBObject, getConnectionStatus, getRateLimiter };

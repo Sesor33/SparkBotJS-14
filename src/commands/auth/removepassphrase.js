@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
-const { getPassphraseObject, getConnectionStatus } = require('../../helpers/database');
+const { getDBObject, getConnectionStatus } = require('../../helpers/database');
 const { debugLog } = require('../../helpers/util');
 const { logCommand } = require('../../helpers/analytics');
 
@@ -24,7 +24,7 @@ module.exports = {
 		const channelId = interaction.options.getChannel('channel').id;
 		const channelName = interaction.options.getChannel('channel').name
 		const guildId = interaction.guildId;
-		const passphrase = getPassphraseObject();
+		const passphrase = getDBObject('passphrase');
 		
 		try {
 			// Checking if guild/channel combo already exists

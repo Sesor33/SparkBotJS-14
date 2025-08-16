@@ -1,4 +1,4 @@
-const { getCommandLogObject, getAnalyticsLogObject, getConnectionStatus, getRateLimiter } = require('../helpers/database');
+const { getDBObject, getConnectionStatus } = require('../helpers/database');
 
 
 const ANALYTICS = process.env.ANALYTICS;
@@ -8,7 +8,7 @@ async function logCommand(interaction, error=false, errorMsg=null) {
 		return;
 	}
 	if (ANALYTICS) {
-		const commandLog = getCommandLogObject() // get the model for command logs
+		const commandLog = getDBObject('commandlog'); // get the model for command logs
 		const commandId = interaction.commandId;
 		const guildId = interaction.guildId;
 		const channelId = interaction.channelId;
@@ -35,7 +35,7 @@ async function logAnalytics(ping, userCount) {
 		return;
 	}
 	if (ANALYTICS) {
-		const analyticsLog = getAnalyticsLogObject();
+		const analyticsLog = getDBObject('analyticslog');
 		
 		try {
 			analyticsLog.create({

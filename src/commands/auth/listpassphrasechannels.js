@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
-const { getPassphraseObject, getConnectionStatus, getRateLimiter } = require('../../helpers/database');
+const {  getConnectionStatus, getRateLimiter, getDBObject } = require('../../helpers/database');
 const { formatList, debugLog } = require('../../helpers/util');
 const { logCommand } = require('../../helpers/analytics');
 const argon2 = require('argon2');
@@ -19,7 +19,7 @@ module.exports = {
 		}
 
 		const guildId = interaction.guildId
-		const passphrase = getPassphraseObject()
+		const passphrase = getDBObject('passphrase');
 		var channelNames = []
 
 

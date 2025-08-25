@@ -16,12 +16,12 @@ async function logCommand(interaction, error=false, errorMsg=null) {
 
 		try {
 			await commandLog.create({
-					command_id: commandId,
-					channel_id: channelId,
-					guild_id: guildId,
-					timestamp: timestamp,
-					error: error,
-					error_msg: errorMsg
+					command_id : commandId,
+					channel_id : channelId,
+					guild_id : guildId,
+					timestamp : timestamp,
+					error : error,
+					error_msg : errorMsg
 			});
 		} catch (err) {
 				console.error('Failed to log command:', err);
@@ -36,11 +36,14 @@ async function logAnalytics(ping, userCount) {
 	}
 	if (ANALYTICS) {
 		const analyticsLog = getDBObject('analyticslog');
+		const timestamp = Date.now();
+		
 		
 		try {
 			analyticsLog.create({
-				latency: ping,
-				user_count: userCount
+				latency : ping,
+				user_count : userCount,
+				timestamp : timestamp
 			})
 		}
 		catch (err) {

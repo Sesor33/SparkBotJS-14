@@ -17,15 +17,19 @@ let commandLog;
 let analyticsLog;
 let rateLimiter;
 let isConnected = false;
-let tables = [];
 
+// async delay in case of docker
+function delayConnection(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-async function initializeDatabase() {
+async function initializeDatabase(delayMs = 10000) {
 	if (!dbName || !dbUsername || !dbPassword) {
 		// Theres nothing here, quit out
 		return;
 	}
 
+	await delayConnection(delayMs);
 	// create rate limiter object
 	rateLimiter = new RateLimiterMemory({
 		points : 1,
@@ -46,7 +50,7 @@ async function initializeDatabase() {
 		await sequelize.authenticate();
 		console.log('DB Connection successful!');
 	} catch (err) {
-		console.error('Arrr, we have a problem with the connection. No DB today it seems');
+		console.error('ERROR: Could not connect to DB. Is it up?');
 	}
 
 	passphrase = sequelize.define('passphrase', {
@@ -71,7 +75,9 @@ async function initializeDatabase() {
 	});
 	dbObjects.passphrase = passphrase;
 
+
 	if (analytics) {
+		console.log('Analytics enabled');
 		commandLog = sequelize.define('commandlog', {
 			command_id: {
 				type : DataTypes.STRING,
@@ -100,7 +106,7 @@ async function initializeDatabase() {
 		}, {
 			paranoid : true
 		});
-		dbObjects.commandlog = commandLog
+		dbObjects.commandlog = commandLog;
 
 		analyticsLog = sequelize.define('analyticslog', {
 			latency: {
@@ -108,7 +114,11 @@ async function initializeDatabase() {
 				allowNull : true
 			},
 			user_count: {
-				type: DataTypes.INTEGER,
+				type : DataTypes.INTEGER,
+				allowNull : false
+			},
+			timestamp: {
+				type : DataTypes.DATE,
 				allowNull : false
 			},
 		}, {
@@ -119,9 +129,10 @@ async function initializeDatabase() {
 
 	// attempt to sync all tables in the list
 	try {
-		for (let table of tables) {
-			await table.sync();
-		}
+		// for (const table of Object.values(dbObjects)) {
+		// 	await table.sync();
+		// }
+		await sequelize.sync({alter: true});	
 		isConnected = true;
 		console.log('Table sync successful!');
 	} catch (err) {

@@ -1,7 +1,7 @@
 services:
   db:
-    # image: ghcr.io/5e-bits/5e-database:latest
-    build: ../DnDLocalAPI/5e-database # I use a mac so I have to build locally, use image if on x86
+    image: ghcr.io/5e-bits/5e-database:latest
+    #build: ../DnDLocalAPI/5e-database # I use a mac so I have to build locally, use image if on x86
     ports:
       - '27017:27017'
 
@@ -38,4 +38,15 @@ services:
       DB_NAME: ${DB_NAME}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
-
+      ANALYTICS: ${ANALYTICS}
+      DEBUG: ${DEBUG}
+    restart: always
+    depends_on:
+        - sparkbotdb
+    
+  grafana:
+    image: grafana/grafana-enterprise
+    restart: unless-stopped
+    ports:
+      - '3001:3000'
+    

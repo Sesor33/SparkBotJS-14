@@ -136,3 +136,6 @@ config.json
 # Mac
 .DS_Store
 
+# Data for applications
+data/
+

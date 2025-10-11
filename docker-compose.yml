@@ -57,5 +57,5 @@ services:
     volumes:
         - ./data/grafana/storage:/var/lib/grafana
         - ./data/grafana/provisioning/:/etc/grafana/provisioning
-
+        - ./data/grafana/dashboards/:/var/lib/grafana/dashboards
     

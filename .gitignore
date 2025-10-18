@@ -132,3 +132,11 @@ dist
 # config stuff
 config.json
 *.code-workspace
+
+# Mac
+.DS_Store
+
+# Data for applications
+data/mysql/
+data/grafana/storage/
+

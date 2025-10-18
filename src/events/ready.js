@@ -1,27 +1,32 @@
 const { Events } = require('discord.js');
-const { useMainPlayer } = require("discord-player");
+const { useMainPlayer } = require('discord-player');
+const { getUserCount, getPing } = require('../helpers/util.js')
+const { logAnalytics } = require('../helpers/analytics.js')
 
-const player = useMainPlayer();
+const PLAYER = useMainPlayer();
+const DEBUG = process.env.DEBUG;
+const ANALYTICS = process.env.ANALYTICS;
+const ANALYTICS_INTERVAL = 600000;
 
 module.exports = {
 	name: Events.ClientReady,
 	once: true,
 	execute(client) {
-		let debug = false;
-		if (process.env.DEBUG) {
-			debug = process.env.DEBUG.toLowerCase() == 'debug' ? true : false; // debug set?
-		}
-
-		if (debug) {
-			console.log(player.scanDeps);
+		if (DEBUG) {
+			console.log(PLAYER.scanDeps);
+			PLAYER.events.on("error", (_, err) => console.log(err));
+			PLAYER.events.on("playerError", (_, err) => console.log(err));
 	
-			player.events.on("error", (_, err) => console.log(err));
-			player.events.on("playerError", (_, err) => console.log(err));
-	
-			player.events.on("debug", (_, msg) => console.log(msg));
-			player.on("debug", (msg) => console.log(msg));
+			PLAYER.events.on("debug", (_, msg) => console.log(msg));
+			PLAYER.on("debug", (msg) => console.log(msg));
 		}
 		
+		if (ANALYTICS) {
+			setInterval(() => {
+				logAnalytics(getPing(client), getUserCount(client));
+			}, ANALYTICS_INTERVAL);
+		}
+
 		console.log(`Ready! Logged in as ' ${client.user.tag}`);
 	},
 };

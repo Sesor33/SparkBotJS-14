@@ -1,0 +1,11 @@
+apiVersion: 1
+
+datasources:
+  - name: SparkbotDB
+    type: mysql
+    access: proxy
+    url: sparkbotdb:3306
+    user: $DB_USERNAME
+    database: SparkbotDB
+    secureJsonData:
+      password: $DB_PASSWORD

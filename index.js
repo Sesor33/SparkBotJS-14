@@ -24,9 +24,6 @@ const player = new Player(client);
 player.extractors.loadDefault((ext) => ext !== 'YouTubeExtractor'); // YoutubeExtractor is broken, use YoutubeiExtractor
 player.extractors.register(YoutubeiExtractor, {});
 
-
-
-
 // handle command files
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'src/commands');
@@ -84,3 +81,5 @@ initializeDatabase();
 
 // Login to Discord with your client's token
 client.login(token);
+
+module.exports = { client };

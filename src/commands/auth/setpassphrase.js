@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
-const { getPassphraseObject, getConnectionStatus } = require('../../helpers/database');
+const { getDBObject, getConnectionStatus } = require('../../helpers/database');
 const { debugLog } = require('../../helpers/util');
+const { logCommand } = require('../../helpers/analytics');
 const argon2 = require('argon2');
 
 
@@ -35,7 +36,7 @@ module.exports = {
 		const roleId = interaction.options.getRole('role').id;
 		const guildId = interaction.guildId;
 		const hashedPhrase = await argon2.hash(phrase, {type: argon2.argon2id});
-		const passphrase = getPassphraseObject();
+		const passphrase = getDBObject('passphrase');
 		
 		try {
 			// Checking if guild/channel combo already exists
@@ -76,6 +77,7 @@ module.exports = {
 				);
 			}
 		} catch (err) {
+			logCommand(interaction, true, err.message);
 			return await interaction.followUp({ content: `Something broke: ${err.message}` });
 		}
 

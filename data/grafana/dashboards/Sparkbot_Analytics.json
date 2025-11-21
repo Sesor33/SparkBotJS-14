@@ -113,7 +113,7 @@
           },
           "editorMode": "builder",
           "format": "table",
-          "rawSql": "SELECT latency, timestamp FROM SparkbotDB.analyticslogs LIMIT 50 ",
+          "rawSql": "SELECT latency, timestamp FROM SparkbotDB.analyticslogs ",
           "refId": "A",
           "sql": {
             "columns": [
@@ -245,7 +245,7 @@
           },
           "editorMode": "builder",
           "format": "table",
-          "rawSql": "SELECT user_count, timestamp FROM SparkbotDB.analyticslogs LIMIT 50 ",
+          "rawSql": "SELECT user_count, timestamp FROM SparkbotDB.analyticslogs ",
           "refId": "A",
           "sql": {
             "columns": [

@@ -136,7 +136,7 @@ async function initializeDatabase(delayMs = 10000) {
 		isConnected = true;
 		console.log('Table sync successful!');
 	} catch (err) {
-		console.log('Table did not sync properly: ', err);
+		console.log('Table did not sync properly: ', JSON.stringify(err, null, 4));
 	}
 }
 

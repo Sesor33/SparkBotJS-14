@@ -1,7 +1,11 @@
 const axios = require('axios');
-const isLocalAPI = process.env.IS_LOCAL_API;
-const debug = process.env.DEBUG;
+const isLocalAPI = parseEnvBoolean(process.env.IS_LOCAL_API);
+const debug = parseEnvBoolean(process.env.DEBUG);
 
+
+function parseEnvBoolean(value) {
+	return value && value.toLowerCase() !== 'false' && value !== '0';
+}
 
 function generateRandomNumber(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -10,7 +14,7 @@ function generateRandomNumber(min, max) {
 
 async function fetchSRDData(category, name) {
 	// You need a local version of the 5e SRD API to do local API, pictures not included
-	const baseUrl = isLocalAPI ? 'http://localhost:3000/api/2014/' : 'https://www.dnd5eapi.co/api/';
+	const baseUrl = isLocalAPI ? 'http://localhost:3000/api/2014/' : 'https://www.dnd5eapi.co/api/2014/';
 	console.log(baseUrl);
 	const categoryFormatted = category.toLowerCase().replaceAll(' ', '-');
 	const nameFormatted = name.toLowerCase().replaceAll(' ', '-');
@@ -31,7 +35,7 @@ async function fetchSRDData(category, name) {
 
 // Format list to a single line joined by a commas
 function formatList(listObject, fallbackString = 'N/A') {
-	let result = Array.isArray(listObject) ? listObject.join(', ') : listObject;
+	const result = Array.isArray(listObject) ? listObject.join(', ') : listObject;
 	return result ? result : fallbackString;
 }
 
@@ -48,7 +52,7 @@ function debugLog(obj) {
 function getUserCount(client) {
 	let totalUsers = 0;
 	client.guilds.cache.forEach(guild => {
-		totalUsers += guild.memberCount
+		totalUsers += guild.memberCount;
 	});
 	return totalUsers;
 }

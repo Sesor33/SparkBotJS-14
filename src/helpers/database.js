@@ -1,7 +1,8 @@
 const { Sequelize, DataTypes } = require('@sequelize/core');
 const { MySqlDialect } = require('@sequelize/mysql');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
-require('dotenv').config(); // getting environment variables
+// getting environment variables
+require('dotenv').config();
 
 const dbName = process.env.DB_NAME;
 const dbUsername = process.env.DB_USERNAME;
@@ -9,7 +10,7 @@ const dbPassword = process.env.DB_PASSWORD;
 const dbHost = 'localhost';
 const dbPort = 3306;
 const analytics = process.env.ANALYTICS;
-const dbObjects = {}
+const dbObjects = {};
 
 let sequelize;
 let passphrase;
@@ -33,7 +34,7 @@ async function initializeDatabase(delayMs = 10000) {
 	// create rate limiter object
 	rateLimiter = new RateLimiterMemory({
 		points : 1,
-		duration : 10
+		duration : 10,
 	});
 
 	// create a new sequelize instance
@@ -43,35 +44,36 @@ async function initializeDatabase(delayMs = 10000) {
 		user : dbUsername,
 		password : dbPassword,
 		host : dbHost,
-		port : dbPort
+		port : dbPort,
 	});
-	
+
 	try {
 		await sequelize.authenticate();
 		console.log('DB Connection successful!');
-	} catch (err) {
+	}
+	catch (err) {
 		console.error('ERROR: Could not connect to DB. Is it up?');
 	}
 
 	passphrase = sequelize.define('passphrase', {
 		guild_id: {
 			type : DataTypes.STRING,
-			allowNull : false
+			allowNull : false,
 		},
 		channel_id: {
 			type : DataTypes.STRING,
-			allowNull : false
+			allowNull : false,
 		},
 		phrase: {
 			type : DataTypes.STRING,
-			allowNull : false
+			allowNull : false,
 		},
 		role_id: {
 			type : DataTypes.STRING,
-			allowNull : false
+			allowNull : false,
 		},
 	}, {
-		paranoid : true
+		paranoid : true,
 	});
 	dbObjects.passphrase = passphrase;
 
@@ -81,48 +83,48 @@ async function initializeDatabase(delayMs = 10000) {
 		commandLog = sequelize.define('commandlog', {
 			command_id: {
 				type : DataTypes.STRING,
-				allowNull : false
+				allowNull : false,
 			},
 			channel_id: {
 				type : DataTypes.STRING,
-				allowNull : false
+				allowNull : false,
 			},
 			guild_id: {
 				type : DataTypes.STRING,
-				allowNull : false
+				allowNull : false,
 			},
 			timestamp: {
 				type : DataTypes.DATE,
-				allowNull : false
+				allowNull : false,
 			},
 			error: {
 				type : DataTypes.BOOLEAN,
-				allowNull : false
+				allowNull : false,
 			},
 			error_msg: {
 				type : DataTypes.STRING,
-				allowNull : true
+				allowNull : true,
 			},
 		}, {
-			paranoid : true
+			paranoid : true,
 		});
 		dbObjects.commandlog = commandLog;
 
 		analyticsLog = sequelize.define('analyticslog', {
 			latency: {
 				type : DataTypes.INTEGER,
-				allowNull : true
+				allowNull : true,
 			},
 			user_count: {
 				type : DataTypes.INTEGER,
-				allowNull : false
+				allowNull : false,
 			},
 			timestamp: {
 				type : DataTypes.DATE,
-				allowNull : false
+				allowNull : false,
 			},
 		}, {
-			paranoid : true
+			paranoid : true,
 		});
 		dbObjects.analyticslog = analyticsLog;
 	}
@@ -132,10 +134,11 @@ async function initializeDatabase(delayMs = 10000) {
 		// for (const table of Object.values(dbObjects)) {
 		// 	await table.sync();
 		// }
-		await sequelize.sync({alter: true});	
+		await sequelize.sync({ alter: true });
 		isConnected = true;
 		console.log('Table sync successful!');
-	} catch (err) {
+	}
+	catch (err) {
 		console.log('Table did not sync properly: ', JSON.stringify(err, null, 4));
 	}
 }
@@ -148,8 +151,9 @@ function getConnectionStatus() {
 function getDBObject(tableName) {
 	if (tableName in dbObjects) {
 		return dbObjects[tableName];
-	} else {
-		console.error("Invalid table name: " + tableName);
+	}
+	else {
+		console.error('Invalid table name: ' + tableName);
 		return null;
 	}
 }

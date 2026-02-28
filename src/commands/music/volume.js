@@ -21,7 +21,7 @@ module.exports = {
 			return await interaction.followUp('Nothing is playing.');
 		}
 
-		timeline.setVolume(volume)
+		timeline.setVolume(volume);
 
 		return await interaction.followUp(`Set volume to **${volume}**`);
 	},

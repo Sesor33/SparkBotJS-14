@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
-const { getDBObject, getConnectionStatus } = require('../../helpers/database');
+const { getDBObject, getConnectionStatus, getRateLimiter } = require('../../helpers/database');
 const { debugLog } = require('../../helpers/util');
 const { logCommand } = require('../../helpers/analytics');
 
@@ -9,12 +9,12 @@ module.exports = {
 		.setDescription('Removes the passphrase/role association for the selected channel')
 		.addChannelOption(option =>
 			option.setName('channel')
-			.setDescription('Channel to remove passphrase from')
-			.setRequired(true))
+				.setDescription('Channel to remove passphrase from')
+				.setRequired(true))
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
-	
-	async execute(interaction, client) {
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral })
+
+	async execute(interaction) {
+		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 		// ensure DB is connected before proceeding
 		if (!getConnectionStatus()) {
 			return await interaction.followUp('Database is not connected!');
@@ -22,17 +22,22 @@ module.exports = {
 
 		// get relevant data
 		const channelId = interaction.options.getChannel('channel').id;
-		const channelName = interaction.options.getChannel('channel').name
+		const channelName = interaction.options.getChannel('channel').name;
 		const guildId = interaction.guildId;
+		const userId = interaction.userId;
 		const passphrase = getDBObject('passphrase');
-		
+		const rateLimiter = getRateLimiter();
+
+
 		try {
+			await rateLimiter.consume(userId);
+
 			// Checking if guild/channel combo already exists
-			existingHash = await passphrase.findOne({
+			const existingHash = await passphrase.findOne({
 				where : {
 					guild_id : guildId,
-					channel_id : channelId
-				}
+					channel_id : channelId,
+				},
 			});
 
 			// delete if exists
@@ -41,7 +46,7 @@ module.exports = {
 				await passphrase.destroy({
 					where : {
 						guild_id : guildId,
-						channel_id : channelId
+						channel_id : channelId,
 					},
 				});
 			}
@@ -49,13 +54,14 @@ module.exports = {
 			// ignore if doesn't exist
 			else {
 				debugLog('Didn\'t find a value, doing nothing');
-				return await interaction.followUp({ content: `No existing passphrases for channel: ${channelName}` })
+				return await interaction.followUp({ content: `No existing passphrases for channel: ${channelName}` });
 			}
-		} catch (err) {
+		}
+		catch (err) {
 			logCommand(interaction, true, err.message);
 			return await interaction.followUp(`Something broke: ${err.message}`);
 		}
 
 		return await interaction.followUp({ content: `Successfully removed passphrase from channel: ${channelName}` });
 	},
-}
+};

@@ -14,7 +14,7 @@ module.exports = {
 			.setDescription('Value of a single die')
 			.setMinValue(1)
 			.setMaxValue(1000)
-			.setRequired(true)
+			.setRequired(true),
 		),
 	async execute(interaction) {
 		const numDice = interaction.options.getNumber('numdice');
@@ -22,8 +22,9 @@ module.exports = {
 
 		await interaction.deferReply();
 		await interaction.followUp(`Rolling **${numDice}d${diceValue}**`);
-		
+
 		let total = 0;
+		let rollValue = 0;
 
 		for (let i = 0; i < numDice; i++) {
 			rollValue = generateRandomNumber(1, diceValue);

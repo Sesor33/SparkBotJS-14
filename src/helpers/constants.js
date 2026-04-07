@@ -22,7 +22,7 @@ const DND_SEARCH_CATEGORY_OPTIONS = [
 	'Subclasses',
 	'Subraces',
 	'Traits',
-	'Weapon Properties'
+	'Weapon Properties',
 ];
 
 const DND_SEARCH_ABILITY_SCORES_OPTIONS = [
@@ -31,7 +31,7 @@ const DND_SEARCH_ABILITY_SCORES_OPTIONS = [
 	'DEX',
 	'INT',
 	'STR',
-	'WIS'
+	'WIS',
 ];
 
 const DND_SEARCH_ALIGNMENT_OPTIONS = [
@@ -43,7 +43,7 @@ const DND_SEARCH_ALIGNMENT_OPTIONS = [
 	'Lawful Neutral',
 	'Neutral',
 	'Neutral Evil',
-	'Neutral Good'
+	'Neutral Good',
 ];
 
 const DND_SEARCH_CLASS_OPTIONS = [
@@ -58,7 +58,7 @@ const DND_SEARCH_CLASS_OPTIONS = [
 	'Rogue',
 	'Sorcerer',
 	'Warlock',
-	'Wizard'
+	'Wizard',
 ];
 
 const DND_SEARCH_CONDITIONS_OPTIONS = [
@@ -76,7 +76,7 @@ const DND_SEARCH_CONDITIONS_OPTIONS = [
 	'Prone',
 	'Restrained',
 	'Stunned',
-	'Unconscious'
+	'Unconscious',
 ];
 
 const DND_SEARCH_DAMAGE_TYPE_OPTIONS = [
@@ -92,7 +92,7 @@ const DND_SEARCH_DAMAGE_TYPE_OPTIONS = [
 	'Psychic',
 	'Radiant',
 	'Slashing',
-	'Thunder'
+	'Thunder',
 ];
 
 const DND_SEARCH_EQUIPMENT_TYPES_OPTIONS = [
@@ -134,7 +134,7 @@ const DND_SEARCH_EQUIPMENT_TYPES_OPTIONS = [
 	'Wand',
 	'Waterborne Vehicles',
 	'Weapon',
-	'Wondrous Items'
+	'Wondrous Items',
 ];
 
 const DND_SEARCH_LANGUAGES_OPTIONS = [
@@ -153,7 +153,7 @@ const DND_SEARCH_LANGUAGES_OPTIONS = [
 	'Orc',
 	'Primordial',
 	'Sylvan',
-	'Undercommon'
+	'Undercommon',
 ];
 
 const DND_SEARCH_MAGIC_SCHOOLS_OPTIONS = [
@@ -164,7 +164,7 @@ const DND_SEARCH_MAGIC_SCHOOLS_OPTIONS = [
 	'Evocation',
 	'Illusion',
 	'Necromancy',
-	'Transmutation'
+	'Transmutation',
 ];
 
 const DND_SEARCH_RACES_OPTIONS = [
@@ -176,7 +176,7 @@ const DND_SEARCH_RACES_OPTIONS = [
 	'Half-Orc',
 	'Halfling',
 	'Human',
-	'Tiefling'
+	'Tiefling',
 ];
 
 const DND_SEARCH_RULES_OPTIONS = [
@@ -185,7 +185,7 @@ const DND_SEARCH_RULES_OPTIONS = [
 	'Combat',
 	'Equipment',
 	'Spellcasting',
-	'Using Ability Scores'
+	'Using Ability Scores',
 ];
 
 const DND_SEARCH_SKILLS_OPTIONS = [
@@ -206,8 +206,8 @@ const DND_SEARCH_SKILLS_OPTIONS = [
 	'Religion',
 	'Sleight of Hand',
 	'Stealth',
-	'Survival'
-]
+	'Survival',
+];
 
 const DND_SEARCH_SUBCLASSES_OPTIONS = [
 	'Berserker',
@@ -221,8 +221,8 @@ const DND_SEARCH_SUBCLASSES_OPTIONS = [
 	'Life',
 	'Lore',
 	'Open Hand',
-	'Thief'
-]
+	'Thief',
+];
 
 const DND_SEARCH_WEAPON_PROPERTIES_OPTIONS = [
 	'Ammunition',
@@ -235,65 +235,65 @@ const DND_SEARCH_WEAPON_PROPERTIES_OPTIONS = [
 	'Special',
 	'Thrown',
 	'Two-Handed',
-	'Versatile'
-]
+	'Versatile',
+];
 
 
 async function getAutocompleteOptions(category) {
 	const lowerCaseCategory = category.toLowerCase();
 
-	switch(lowerCaseCategory) {
-		case 'ability scores':
-			return DND_SEARCH_ABILITY_SCORES_OPTIONS;
-		case 'alignments':
-			return DND_SEARCH_ALIGNMENT_OPTIONS;
-		case 'backgrounds':
-			return [];
-		case 'classes':
-			return DND_SEARCH_CLASS_OPTIONS;
-		case 'conditions':
-			return DND_SEARCH_CONDITIONS_OPTIONS;
-		case 'damage types':
-			return DND_SEARCH_DAMAGE_TYPE_OPTIONS;
-		case 'equipment':
-			return [];
-		case 'equipment categories':
-			return [];
-		case 'feats':
-			return [];
-		case 'features':
-			return [];
-		case 'languages':
-			return DND_SEARCH_LANGUAGES_OPTIONS;
-		case 'magic items':
-			return [];
-		case 'magic schools':
-			return DND_SEARCH_MAGIC_SCHOOLS_OPTIONS;
-		case 'monsters':
-			return [];
-		case 'proficiencies':
-			return [];
-		case 'races':
-			return DND_SEARCH_RACES_OPTIONS;
-		case 'rule sections':
-			return [];
-		case 'rules':
-			return DND_SEARCH_RULES_OPTIONS;
-		case 'skills':
-			return DND_SEARCH_SKILLS_OPTIONS;
-		case 'spells':
-			return [];
-		case 'subclasses':
-			return DND_SEARCH_SUBCLASSES_OPTIONS;
-		case 'subraces':
-			return [];
-		case 'traits':
-			return [];
-		case 'weapon properties':
-			return DND_SEARCH_WEAPON_PROPERTIES_OPTIONS;
-		default:
-			console.error('Didn\'t find an applicable case for autocomplete');
-			return [];
+	switch (lowerCaseCategory) {
+	case 'ability scores':
+		return DND_SEARCH_ABILITY_SCORES_OPTIONS;
+	case 'alignments':
+		return DND_SEARCH_ALIGNMENT_OPTIONS;
+	case 'backgrounds':
+		return [];
+	case 'classes':
+		return DND_SEARCH_CLASS_OPTIONS;
+	case 'conditions':
+		return DND_SEARCH_CONDITIONS_OPTIONS;
+	case 'damage types':
+		return DND_SEARCH_DAMAGE_TYPE_OPTIONS;
+	case 'equipment':
+		return [];
+	case 'equipment categories':
+		return DND_SEARCH_EQUIPMENT_TYPES_OPTIONS;
+	case 'feats':
+		return [];
+	case 'features':
+		return [];
+	case 'languages':
+		return DND_SEARCH_LANGUAGES_OPTIONS;
+	case 'magic items':
+		return [];
+	case 'magic schools':
+		return DND_SEARCH_MAGIC_SCHOOLS_OPTIONS;
+	case 'monsters':
+		return [];
+	case 'proficiencies':
+		return [];
+	case 'races':
+		return DND_SEARCH_RACES_OPTIONS;
+	case 'rule sections':
+		return [];
+	case 'rules':
+		return DND_SEARCH_RULES_OPTIONS;
+	case 'skills':
+		return DND_SEARCH_SKILLS_OPTIONS;
+	case 'spells':
+		return [];
+	case 'subclasses':
+		return DND_SEARCH_SUBCLASSES_OPTIONS;
+	case 'subraces':
+		return [];
+	case 'traits':
+		return [];
+	case 'weapon properties':
+		return DND_SEARCH_WEAPON_PROPERTIES_OPTIONS;
+	default:
+		console.error('Didn\'t find an applicable case for autocomplete');
+		return [];
 	}
 }
 

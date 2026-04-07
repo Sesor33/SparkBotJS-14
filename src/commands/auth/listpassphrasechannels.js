@@ -1,8 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
-const {  getConnectionStatus, getRateLimiter, getDBObject } = require('../../helpers/database');
-const { formatList, debugLog } = require('../../helpers/util');
+const { getConnectionStatus, getRateLimiter, getDBObject } = require('../../helpers/database');
+const { formatList } = require('../../helpers/util');
 const { logCommand } = require('../../helpers/analytics');
-const argon2 = require('argon2');
 
 
 module.exports = {
@@ -10,42 +9,46 @@ module.exports = {
 		.setName('listpassphrasechannels')
 		.setDescription('Lists all channels in the current guild that have passphrases enabled')
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
-		
+
 	async execute(interaction, client) {
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral })
+		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 		// ensure DB is connected before proceeding
 		if (!getConnectionStatus()) {
 			return await interaction.followUp('Database is not connected!');
 		}
 
-		const guildId = interaction.guildId
+		const userId = interaction.userId;
+		const guildId = interaction.guildId;
+		const channelNames = [];
 		const passphrase = getDBObject('passphrase');
-		var channelNames = []
-
+		const rateLimiter = getRateLimiter();
 
 		try {
+			await rateLimiter.consume(userId);
+
 			// get channels based on guild ID
 			const result = await passphrase.findAll({
 				attributes : ['channel_id'],
 				where : {
-					guild_id : guildId
-				}
+					guild_id : guildId,
+				},
 			});
 			// extract each dataValue result from result
 			const records = result.map(function(res) {
-				return res.dataValues
-			})
+				return res.dataValues;
+			});
 
-			for (let entry of records) {
-				const channel = await client.channels.fetch(entry.channel_id)
-				channelNames.push(channel.name)
+			for (const entry of records) {
+				const channel = await client.channels.fetch(entry.channel_id);
+				channelNames.push(channel.name);
 			}
-		}  catch (err) {
+		}
+		catch (err) {
 			logCommand(interaction, true, err.message);
 			return await interaction.followUp({ content: `Error when contacting database ${err}` });
-		}   
+		}
 
-		
-		return await interaction.followUp({ content: `Channels: ${formatList(channelNames)}` })
-	}
-}
+
+		return await interaction.followUp({ content: `Channels: ${formatList(channelNames)}` });
+	},
+};

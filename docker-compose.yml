@@ -1,6 +1,6 @@
 services:
   db:
-    image: ghcr.io/5e-bits/5e-database:latest
+    image: forsburn/5e-database:latest
     #build: ../DnDLocalAPI/5e-database # I use a mac so I have to build locally, use image if on x86
     ports:
       - '27017:27017'
@@ -11,10 +11,10 @@ services:
       - '6379:6379'
 
   api:
+    image: forsburn/5e-srd-api:latest
     environment:
       MONGODB_URI: mongodb://db/5e-database
       REDIS_URL: redis://cache:6379
-    build: .
     ports:
       - '3000:3000'
     depends_on:

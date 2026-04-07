@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { fetchSRDData } = require('../../helpers/util'); 
+const { fetchSRDData } = require('../../helpers/util');
 const { DND_SEARCH_CATEGORY_OPTIONS, getAutocompleteOptions } = require('../../helpers/constants');
 const { getEmbed, formatDnDData } = require('../../helpers/embedGenerator');
 const { logCommand } = require('../../helpers/analytics');
@@ -15,7 +15,7 @@ module.exports = {
 		.addStringOption(option => option.setName('name')
 			.setDescription('Name to search for, case insensitive')
 			.setRequired(true)
-			.setAutocomplete(true)
+			.setAutocomplete(true),
 		),
 
 	async autocomplete(interaction) {
@@ -28,7 +28,7 @@ module.exports = {
 
 		if (focusedOption.name == 'name') {
 			console.log(`Trying to get options: ${interaction.options.getString('category')}`);
-			choices =  await getAutocompleteOptions(interaction.options.getString('category'));
+			choices = await getAutocompleteOptions(interaction.options.getString('category'));
 		}
 
 		const filtered = choices.filter(choice => choice.toLowerCase().startsWith(focusedOption.value.toLowerCase()));
@@ -44,17 +44,17 @@ module.exports = {
 
 		await interaction.deferReply();
 		await interaction.followUp(`Searching for: **${category} - ${name}**`);
-		
+
 		try {
 			const result = await fetchSRDData(category, name);
 			const embedType = category.toLowerCase().replace(' ', '-');
 			const formattedData = formatDnDData(result, embedType);
 			const embed = getEmbed(formattedData, embedType);
-			
+
 			return await interaction.followUp({ embeds: [embed] });
 		}
 		catch (err) {
-			logCommand(interaction, true, e.message);
+			logCommand(interaction, true, err.message);
 			return await interaction.followUp(`Something broke: ${err.message}`);
 		}
 	},

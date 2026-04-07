@@ -17,7 +17,7 @@ module.exports = {
 		await interaction.deferReply();
 
 		if (!channel) {
-			return await interaction.followUp('**You must be in a voice channel to play music!**')
+			return await interaction.followUp('**You must be in a voice channel to play music!**');
 		}
 
 		try {
@@ -31,7 +31,7 @@ module.exports = {
 		}
 		catch (err) {
 			logCommand(interaction, true, err.message);
-			return await interaction.followUp(`Something broke: ${e}`);
+			return await interaction.followUp(`Something broke: ${err}`);
 		}
 	},
 };

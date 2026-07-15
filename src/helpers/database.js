@@ -7,7 +7,7 @@ require('dotenv').config();
 const dbName = process.env.DB_NAME;
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
-const dbHost = 'localhost';
+const dbHost = process.env.DB_HOST;
 const dbPort = 3306;
 const analytics = process.env.ANALYTICS;
 const dbObjects = {};
@@ -139,7 +139,8 @@ async function initializeDatabase(delayMs = 10000) {
 		console.log('Table sync successful!');
 	}
 	catch (err) {
-		console.log('Table did not sync properly: ', JSON.stringify(err, null, 4));
+		console.error('Table did not sync properly:', err.name, ' | ', err.message);
+		console.debug('Full error:', err);
 	}
 }
 

@@ -3,8 +3,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits, Embed } = require('discord.js');
 require('dotenv').config(); // getting environment variables
-const { YoutubeiExtractor } = require('discord-player-youtubei');
 const { EmbedBuilder } = require('discord.js');
+const { DefaultExtractors } = require('@discord-player/extractor');
 const { getEmbed } = require('./src/helpers/embedGenerator');
 const { initializeDatabase } = require('./src/helpers/database');
 
@@ -21,8 +21,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 const player = new Player(client);
 
 // Load default extractors except YoutubeExtractor
-player.extractors.loadDefault((ext) => ext !== 'YouTubeExtractor'); // YoutubeExtractor is broken, use YoutubeiExtractor
-player.extractors.register(YoutubeiExtractor, {});
+player.extractors.loadMulti(DefaultExtractors);
 
 // handle command files
 client.commands = new Collection();
@@ -70,7 +69,7 @@ player.events.on('playerStart', (queue, track) => {
 		"description": track.description,
 		"thumbnail": track.thumbnail,
 		"duration": track.duration,
-		"views": track.views
+		"views": track.views,
 	};
 
 	const songEmbed = getEmbed(embedData, 'video');
